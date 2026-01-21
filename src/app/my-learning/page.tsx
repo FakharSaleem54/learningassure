@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/db'
+import prisma from '@/lib/prisma'
 import Link from 'next/link'
 
 export default async function MyLearningPage() {

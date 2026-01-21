@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getSession } from '@/lib/session';
-import { prisma } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import UserMenu from './UserMenu';
 import NotificationList from '@/components/NotificationList';
 

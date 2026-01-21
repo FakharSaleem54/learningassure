@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import CourseCard from '@/components/CourseCard';
-import { prisma } from '@/lib/db';
+import prisma from '@/lib/prisma';
 import { User, BookOpen, Clock, Users, Award, Briefcase, Zap, Accessibility, Trophy } from 'lucide-react';
 
 export default async function Home() {

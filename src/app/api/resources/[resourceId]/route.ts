@@ -1,5 +1,5 @@
 import { getSession } from '@/lib/session'
-import { prisma } from '@/lib/db'
+import prisma from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { createReadStream, statSync } from 'fs'
 import { join } from 'path'

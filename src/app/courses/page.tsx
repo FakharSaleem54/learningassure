@@ -1,5 +1,5 @@
 
-import { prisma } from '@/lib/db'
+import prisma from '@/lib/prisma'
 import Link from 'next/link'
 
 export default async function CoursesPage() {

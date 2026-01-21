@@ -38,7 +38,7 @@ export async function getOrCreateCertificate(courseId: string) {
 
         // Allow certificate generation if progress is 100% OR completed flag is true
         // (Handling legacy or different completion tracking logic)
-        if (!enrollment.completed && enrollment.progress < 100) {
+        if (!enrollment.completed && Number(enrollment.progress) < 100) {
             return { success: false, error: "Course not completed yet" };
         }
 

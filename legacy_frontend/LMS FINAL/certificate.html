@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Certificates - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/cert.js"></script>
+  <script src="linkedin_integration.js"></script>
+  <script src="blockchain_certificates.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-certificates">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="forum.html">Forum</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="register.html">Sign Up</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>My Certificates</h1>
+      <p>Celebrate your achievements and showcase your skills</p>
+    </div>
+
+    <!-- Certificate Stats -->
+    <div class="certificates-stats">
+      <div class="stat-card">
+        <div class="stat-icon">🎓</div>
+        <div class="stat-content">
+          <h3 id="totalCertificates">0</h3>
+          <p>Total Certificates</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-content">
+          <h3 id="thisMonthCertificates">0</h3>
+          <p>This Month</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-content">
+          <h3 id="averageScore">0%</h3>
+          <p>Average Score</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificates Grid -->
+    <div class="certificates-section">
+      <div id="certificatesArea" class="certificates-grid">
+        <!-- Certificates will be populated by JavaScript -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="noCertificates" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">🎓</div>
+        <h3>No certificates yet</h3>
+        <p>Complete courses to earn your first certificate!</p>
+        <a href="catalog.html" class="btn primary">Browse Courses</a>
+      </div>
+    </div>
+
+    <!-- Certificate Actions -->
+    <div class="certificate-actions">
+      <button class="btn outline" onclick="CertificateManager.downloadAllCertificates()">
+        <span class="btn-icon">⬇</span>
+        Download All
+      </button>
+      <button class="btn outline" onclick="CertificateManager.shareAllCertificates()">
+        <span class="btn-icon">📤</span>
+        Share All
+      </button>
+    </div>
+  </div>
+
+  <!-- Certificate Modal (for viewing/printing) -->
+  <div id="certificateModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content certificate-modal">
+      <div class="modal-header">
+        <h3>Certificate of Completion</h3>
+        <button class="modal-close" onclick="CertificateManager.closeCertificateModal()">&times;</button>
+      </div>
+      <div class="certificate-preview" id="certificatePreview">
+        <!-- Certificate content will be populated by JavaScript -->
+      </div>
+      <div class="modal-actions">
+        <button class="btn outline" onclick="CertificateManager.printCertificate()">
+          <span class="btn-icon">🖨️</span>
+          Print
+        </button>
+        <button class="btn primary" onclick="CertificateManager.downloadCertificate()">
+          <span class="btn-icon">⬇</span>
+          Download PDF
+        </button>
+        <button class="btn outline" onclick="CertificateManager.shareCertificate()">
+          <span class="btn-icon">📤</span>
+          Share
+        </button>
+        <button class="btn outline" onclick="shareOnLinkedIn()">
+          <span class="btn-icon">💼</span>
+          Share on LinkedIn
+        </button>
+        <button class="btn outline" onclick="issueBlockchainCertificate()">
+          <span class="btn-icon">⛓️</span>
+          Issue Blockchain Cert
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Certificate Verification Modal -->
+  <div id="verificationModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Verify Certificate</h3>
+        <button class="modal-close" onclick="closeVerificationModal()">&times;</button>
+      </div>
+      <div class="verification-content">
+        <p>Enter a certificate ID to verify its authenticity:</p>
+        <input type="text" id="verifyCertId" class="input" placeholder="Certificate ID" maxlength="12">
+        <button class="btn primary" onclick="performVerification()">Verify</button>
+        <div id="verificationResult" class="verification-result" style="display: none;">
+          <!-- Verification result will be shown here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Certificate QR Code and Verification Functions
+    let currentCertificate = null;
+
+    function generateCertificateQR(certificateId) {
+      const verificationUrl = `${window.location.origin}/certificate.html?verify=${certificateId}`;
+      const qrContainer = document.getElementById('certificateQR');
+
+      if (qrContainer) {
+        qrContainer.innerHTML = ''; // Clear existing QR
+        QRCode.toCanvas(qrContainer, verificationUrl, {
+          width: 120,
+          height: 120,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        }, function (error) {
+          if (error) console.error('QR Code generation failed:', error);
+        });
+      }
+    }
+
+    function showVerificationModal() {
+      document.getElementById('verificationModal').style.display = 'flex';
+      document.getElementById('verifyCertId').focus();
+      return false; // Prevent navigation
+    }
+
+    function closeVerificationModal() {
+      document.getElementById('verificationModal').style.display = 'none';
+      document.getElementById('verifyCertId').value = '';
+      document.getElementById('verificationResult').style.display = 'none';
+    }
+
+    function performVerification() {
+      const certId = document.getElementById('verifyCertId').value.trim();
+      const resultDiv = document.getElementById('verificationResult');
+
+      if (!certId) {
+        showVerificationResult('Please enter a certificate ID', 'error');
+        return;
+      }
+
+      // Check if certificate exists and is valid
+      const certificate = findCertificateById(certId);
+
+      if (certificate) {
+        const isValid = verifyCertificateAuthenticity(certificate);
+        if (isValid) {
+          showVerificationResult(`
+            <div class="verification-success">
+              <h4>✅ Certificate Verified</h4>
+              <p><strong>Course:</strong> ${certificate.courseTitle}</p>
+              <p><strong>Recipient:</strong> ${certificate.recipientName}</p>
+              <p><strong>Completion Date:</strong> ${new Date(certificate.completionDate).toLocaleDateString()}</p>
+              <p><strong>Certificate ID:</strong> ${certificate.id}</p>
+            </div>
+          `, 'success');
+        } else {
+          showVerificationResult('Certificate appears to be invalid or tampered with', 'error');
+        }
+      } else {
+        showVerificationResult('Certificate not found. Please check the ID and try again.', 'error');
+      }
+    }
+
+    function showVerificationResult(message, type) {
+      const resultDiv = document.getElementById('verificationResult');
+      resultDiv.innerHTML = message;
+      resultDiv.className = `verification-result ${type}`;
+      resultDiv.style.display = 'block';
+    }
+
+    function findCertificateById(certId) {
+      // Mock certificate lookup - in production, this would query a database
+      const certificates = JSON.parse(localStorage.getItem('certificates') || '[]');
+      return certificates.find(cert => cert.id === certId);
+    }
+
+    function verifyCertificateAuthenticity(certificate) {
+      // Basic verification - check if required fields exist and dates make sense
+      const requiredFields = ['id', 'recipientName', 'courseTitle', 'completionDate', 'issuedBy'];
+
+      for (const field of requiredFields) {
+        if (!certificate[field]) return false;
+      }
+
+      // Check if completion date is not in the future
+      const completionDate = new Date(certificate.completionDate);
+      const now = new Date();
+      if (completionDate > now) return false;
+
+      // Additional verification logic can be added here
+      // For example, cryptographic signature verification
+
+      return true;
+    }
+
+    // Enhanced certificate display with QR code
+    function displayCertificate(certificate) {
+      currentCertificate = certificate;
+      const displayDiv = document.getElementById('certificatePreview');
+
+      displayDiv.innerHTML = `
+        <div class="certificate-template" id="certificateTemplate">
+          <div class="certificate-header">
+            <div class="certificate-logo">
+              <h2>Learning Assure</h2>
+              <p>Certificate of Completion</p>
+            </div>
+          </div>
+
+          <div class="certificate-body">
+            <div class="certificate-content">
+              <p class="certificate-text">This is to certify that</p>
+              <h3 class="recipient-name">${certificate.recipientName}</h3>
+              <p class="certificate-text">has successfully completed the course</p>
+              <h4 class="course-title">${certificate.courseTitle}</h4>
+              <p class="certificate-text">on</p>
+              <p class="completion-date">${new Date(certificate.completionDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</p>
+            </div>
+
+            <div class="certificate-signatures">
+              <div class="signature-block">
+                <div class="signature-line"></div>
+                <p class="signature-title">Instructor</p>
+                <p class="signature-name">${certificate.issuedBy}</p>
+              </div>
+              <div class="signature-block">
+                <div class="signature-line"></div>
+                <p class="signature-title">Director</p>
+                <p class="signature-name">Learning Assure</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="certificate-footer">
+            <div class="certificate-id">
+              <p>Certificate ID: <strong>${certificate.id}</strong></p>
+            </div>
+            <div class="certificate-qr">
+              <canvas id="certificateQR"></canvas>
+              <p class="qr-label">Scan to verify</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Generate QR code after a short delay to ensure canvas is rendered
+      setTimeout(() => {
+        generateCertificateQR(certificate.id);
+      }, 100);
+
+      document.getElementById('certificateModal').style.display = 'flex';
+    }
+
+    // Enhanced sharing functionality
+    function shareCertificate() {
+      if (!currentCertificate) return;
+
+      const shareUrl = `${window.location.origin}/certificate.html?verify=${currentCertificate.id}`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'Certificate of Completion',
+          text: `Check out my certificate for ${currentCertificate.courseTitle}!`,
+          url: shareUrl
+        });
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          alert('Certificate link copied to clipboard!');
+        });
+      }
+    }
+
+    // Share certificate on LinkedIn
+    function shareOnLinkedIn() {
+      if (!currentCertificate) return;
+
+      if (window.LinkedInIntegration) {
+        window.LinkedInIntegration.shareCertificate(currentCertificate);
+      } else {
+        alert('LinkedIn integration not loaded');
+      }
+    }
+
+    // Issue blockchain certificate
+    async function issueBlockchainCertificate() {
+      if (!currentCertificate) return;
+
+      if (window.BlockchainCertificateManager) {
+        try {
+          const result = await window.BlockchainCertificateManager.issueBlockchainCertificate(currentCertificate);
+          if (result.success) {
+            alert('Blockchain certificate issued successfully! Transaction: ' + result.transactionHash);
+          } else {
+            alert('Failed to issue blockchain certificate: ' + result.error);
+          }
+        } catch (error) {
+          alert('Error issuing blockchain certificate: ' + error.message);
+        }
+      } else {
+        alert('Blockchain integration not loaded');
+      }
+    }
+
+    // Initialize verification from URL parameter
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const verifyId = urlParams.get('verify');
+
+      if (verifyId) {
+        document.getElementById('verifyCertId').value = verifyId;
+        showVerificationModal();
+        performVerification();
+      }
+
+      // Initialize certificates page
+      const session = Auth.requireLogin('login.html');
+      if (!session) return;
+
+      CertificateManager.initializeCertificatesPage();
+    });
+  </script>
+</body>
+</html>

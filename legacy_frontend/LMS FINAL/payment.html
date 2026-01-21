@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure Checkout - Learning Assure</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-payment">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="forum.html">Forum</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="register.html">Sign Up</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Secure Checkout</h1>
+      <p>Complete your enrollment with confidence</p>
+    </div>
+
+    <div class="checkout-layout">
+      <!-- Order Summary -->
+      <div class="checkout-summary">
+        <div class="summary-card">
+          <h2>Order Summary</h2>
+
+          <div class="order-item" id="orderItem">
+            <!-- Order details will be populated by JavaScript -->
+          </div>
+
+          <div class="order-discount" id="discountSection" style="display: none;">
+            <div class="discount-row">
+              <span>Discount</span>
+              <span id="discountAmount">-$0.00</span>
+            </div>
+          </div>
+
+          <div class="order-total">
+            <div class="total-row">
+              <span>Total</span>
+              <span id="orderTotal">$0.00</span>
+            </div>
+          </div>
+
+          <div class="order-meta">
+            <div class="meta-item">
+              <span class="meta-label">Payment Method</span>
+              <span class="meta-value">Credit/Debit Card</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Access Duration</span>
+              <span class="meta-value">Lifetime Access</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Certificate</span>
+              <span class="meta-value">Included</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Badges -->
+        <div class="security-badges">
+          <div class="badge-item">
+            <div class="badge-icon">🔒</div>
+            <span>SSL Encrypted</span>
+          </div>
+          <div class="badge-item">
+            <div class="badge-icon">🛡️</div>
+            <span>Secure Payment</span>
+          </div>
+          <div class="badge-item">
+            <div class="badge-icon">✅</div>
+            <span>Money Back Guarantee</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Form -->
+      <div class="checkout-form">
+        <div class="form-card">
+          <h2>Payment Information</h2>
+
+          <!-- Coupon Code -->
+          <div class="form-section">
+            <h3>Have a coupon?</h3>
+            <div class="coupon-input-group">
+              <input type="text" id="couponCode" class="input" placeholder="Enter coupon code" maxlength="20">
+              <button class="btn outline" onclick="PaymentManager.applyCoupon()">Apply</button>
+            </div>
+            <div id="couponMessage" class="coupon-message" style="display: none;"></div>
+          </div>
+
+          <!-- Payment Method -->
+          <div class="form-section">
+            <h3>Payment Method</h3>
+            <div class="payment-methods">
+              <label class="payment-method active">
+                <input type="radio" name="paymentMethod" value="card" checked>
+                <div class="method-content">
+                  <div class="method-icon">💳</div>
+                  <span>Credit/Debit Card</span>
+                </div>
+              </label>
+              <label class="payment-method">
+                <input type="radio" name="paymentMethod" value="paypal">
+                <div class="method-content">
+                  <div class="method-icon">🅿️</div>
+                  <span>PayPal</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Card Details -->
+          <div id="cardDetails" class="form-section">
+            <h3>Card Details</h3>
+
+            <div class="form-group">
+              <label for="cardNumber">Card Number *</label>
+              <div class="input-group">
+                <input type="text" id="cardNumber" class="input" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                <div class="card-icons">
+                  <span class="card-icon visa">💳</span>
+                  <span class="card-icon mastercard">💳</span>
+                  <span class="card-icon amex">💳</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="expiryDate">Expiry Date *</label>
+                <input type="text" id="expiryDate" class="input" placeholder="MM/YY" maxlength="5" required>
+              </div>
+              <div class="form-group">
+                <label for="cvv">CVV *</label>
+                <input type="text" id="cvv" class="input" placeholder="123" maxlength="4" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cardName">Name on Card *</label>
+              <input type="text" id="cardName" class="input" placeholder="John Doe" required>
+            </div>
+          </div>
+
+          <!-- Billing Address -->
+          <div class="form-section">
+            <h3>Billing Address</h3>
+
+            <div class="form-group">
+              <label for="billingEmail">Email Address *</label>
+              <input type="email" id="billingEmail" class="input" placeholder="john@example.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="billingAddress">Address *</label>
+              <input type="text" id="billingAddress" class="input" placeholder="123 Main Street" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="billingCity">City *</label>
+                <input type="text" id="billingCity" class="input" placeholder="New York" required>
+              </div>
+              <div class="form-group">
+                <label for="billingZip">ZIP Code *</label>
+                <input type="text" id="billingZip" class="input" placeholder="10001" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="billingCountry">Country *</label>
+              <select id="billingCountry" class="input" required>
+                <option value="">Select Country</option>
+                <option value="US">United States</option>
+                <option value="CA">Canada</option>
+                <option value="UK">United Kingdom</option>
+                <option value="AU">Australia</option>
+                <!-- Add more countries as needed -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Terms and Conditions -->
+          <div class="form-section">
+            <div class="terms-checkbox">
+              <input type="checkbox" id="termsAgree" required>
+              <label for="termsAgree">
+                I agree to the <a href="#" target="_blank">Terms of Service</a> and <a href="#" target="_blank">Privacy Policy</a>
+              </label>
+            </div>
+            <div class="terms-checkbox">
+              <input type="checkbox" id="refundAgree">
+              <label for="refundAgree">
+                I understand the <a href="#" target="_blank">refund policy</a> (30-day money back guarantee)
+              </label>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="form-actions">
+            <button type="button" class="btn primary full-width" onclick="PaymentManager.processPayment()">
+              <span class="btn-icon">🔒</span>
+              Complete Payment - <span id="paymentAmount">$0.00</span>
+            </button>
+          </div>
+
+          <!-- Security Notice -->
+          <div class="security-notice">
+            <div class="notice-icon">🔒</div>
+            <div class="notice-content">
+              <h4>Your payment information is secure</h4>
+              <p>We use industry-standard encryption to protect your data. Your card details are never stored on our servers.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Payment Manager
+    const PaymentManager = {
+      orderData: null,
+      discountAmount: 0,
+
+      initializePayment() {
+        const session = Auth.requireLogin('login.html');
+        if (!session) return;
+
+        // Get order data from URL or storage
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('course');
+
+        if (courseId) {
+          this.orderData = CourseManager.getCourseById(courseId);
+        } else {
+          this.orderData = DataManager.get('payment_order') || {
+            title: 'Web Development Bootcamp',
+            price: 49,
+            instructor: 'John Doe'
+          };
+        }
+
+        this.renderOrderSummary();
+        this.setupEventListeners();
+        this.prefillUserData(session);
+      },
+
+      renderOrderSummary() {
+        if (!this.orderData) return;
+
+        const orderItem = document.getElementById('orderItem');
+        const orderTotal = document.getElementById('orderTotal');
+        const paymentAmount = document.getElementById('paymentAmount');
+
+        orderItem.innerHTML = `
+          <div class="item-image">
+            <img src="${this.orderData.thumbnail || '/placeholder-course.jpg'}" alt="${this.orderData.title}" onerror="this.src='/placeholder-course.jpg'">
+          </div>
+          <div class="item-details">
+            <h4>${this.orderData.title}</h4>
+            <p>by ${this.orderData.instructor || 'Instructor'}</p>
+            <div class="item-meta">
+              <span class="meta-tag">${this.orderData.level || 'All Levels'}</span>
+              <span class="meta-tag">${this.orderData.category || 'Course'}</span>
+            </div>
+          </div>
+          <div class="item-price">$${this.orderData.price || 0}</div>
+        `;
+
+        const finalPrice = (this.orderData.price || 0) - this.discountAmount;
+        orderTotal.textContent = `$${finalPrice.toFixed(2)}`;
+        paymentAmount.textContent = `$${finalPrice.toFixed(2)}`;
+      },
+
+      setupEventListeners() {
+        // Payment method selection
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+          radio.addEventListener('change', (e) => {
+            document.querySelectorAll('.payment-method').forEach(method => {
+              method.classList.remove('active');
+            });
+            e.target.closest('.payment-method').classList.add('active');
+
+            // Show/hide card details based on payment method
+            const cardDetails = document.getElementById('cardDetails');
+            cardDetails.style.display = e.target.value === 'card' ? 'block' : 'none';
+          });
+        });
+
+        // Card number formatting
+        document.getElementById('cardNumber').addEventListener('input', (e) => {
+          let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+          let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+          e.target.value = formattedValue;
+        });
+
+        // Expiry date formatting
+        document.getElementById('expiryDate').addEventListener('input', (e) => {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+          }
+          e.target.value = value;
+        });
+      },
+
+      prefillUserData(session) {
+        // Prefill email if available
+        const emailField = document.getElementById('billingEmail');
+        if (session.email) {
+          emailField.value = session.email;
+        }
+      },
+
+      applyCoupon() {
+        const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+        const messageDiv = document.getElementById('couponMessage');
+        const discountSection = document.getElementById('discountSection');
+        const discountAmount = document.getElementById('discountAmount');
+
+        // Simple coupon validation (in real app, this would be server-side)
+        const validCoupons = {
+          'LAIBA10': 0.1, // 10% off
+          'WELCOME20': 0.2, // 20% off
+          'STUDENT50': 0.5  // 50% off
+        };
+
+        if (validCoupons[couponCode]) {
+          const discountPercent = validCoupons[couponCode];
+          this.discountAmount = (this.orderData.price || 0) * discountPercent;
+
+          messageDiv.textContent = `Coupon applied! ${discountPercent * 100}% discount`;
+          messageDiv.className = 'coupon-message success';
+          messageDiv.style.display = 'block';
+
+          discountAmount.textContent = `-$${this.discountAmount.toFixed(2)}`;
+          discountSection.style.display = 'block';
+
+          this.renderOrderSummary();
+        } else {
+          messageDiv.textContent = 'Invalid coupon code';
+          messageDiv.className = 'coupon-message error';
+          messageDiv.style.display = 'block';
+
+          this.discountAmount = 0;
+          discountSection.style.display = 'none';
+          this.renderOrderSummary();
+        }
+      },
+
+      validateForm() {
+        const requiredFields = [
+          'cardNumber', 'expiryDate', 'cvv', 'cardName',
+          'billingEmail', 'billingAddress', 'billingCity', 'billingZip', 'billingCountry'
+        ];
+
+        let isValid = true;
+        const errors = [];
+
+        // Check required fields
+        requiredFields.forEach(fieldId => {
+          const field = document.getElementById(fieldId);
+          if (!field.value.trim()) {
+            field.classList.add('error');
+            isValid = false;
+          } else {
+            field.classList.remove('error');
+          }
+        });
+
+        // Validate card number (basic check)
+        const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+        if (cardNumber.length < 13 || cardNumber.length > 19) {
+          document.getElementById('cardNumber').classList.add('error');
+          errors.push('Invalid card number');
+          isValid = false;
+        }
+
+        // Validate expiry date
+        const expiry = document.getElementById('expiryDate').value;
+        const expiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+        if (!expiryRegex.test(expiry)) {
+          document.getElementById('expiryDate').classList.add('error');
+          errors.push('Invalid expiry date (MM/YY)');
+          isValid = false;
+        }
+
+        // Validate CVV
+        const cvv = document.getElementById('cvv').value;
+        if (cvv.length < 3 || cvv.length > 4) {
+          document.getElementById('cvv').classList.add('error');
+          errors.push('Invalid CVV');
+          isValid = false;
+        }
+
+        // Check terms agreement
+        if (!document.getElementById('termsAgree').checked) {
+          errors.push('You must agree to the Terms of Service');
+          isValid = false;
+        }
+
+        if (errors.length > 0) {
+          AppUtils.showError(errors.join('<br>'));
+        }
+
+        return isValid;
+      },
+
+      async processPayment() {
+        if (!this.validateForm()) return;
+
+        // Show loading state
+        const submitBtn = document.querySelector('.btn.primary');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="btn-icon">⏳</span> Processing...';
+        submitBtn.disabled = true;
+
+        try {
+          // Simulate payment processing
+          await this.simulatePayment();
+
+          // Record payment
+          const session = Auth.currentSession();
+          const finalPrice = (this.orderData.price || 0) - this.discountAmount;
+
+          const payment = {
+            id: 'p' + Date.now(),
+            userId: session.userId,
+            courseId: this.orderData.id,
+            amount: finalPrice,
+            discount: this.discountAmount,
+            timestamp: new Date().toISOString(),
+            status: 'completed'
+          };
+
+          // Save payment
+          const payments = DataManager.get('payments', []);
+          payments.push(payment);
+          DataManager.set('payments', payments);
+
+          // Enroll user in course
+          CourseManager.enrollUser(session.userId, this.orderData.id);
+
+          // Show success message
+          AppUtils.showSuccess('Payment successful! You are now enrolled in the course.');
+
+          // Redirect to course player or dashboard
+          setTimeout(() => {
+            window.location.href = `player.html?course=${this.orderData.id}`;
+          }, 2000);
+
+        } catch (error) {
+          AppUtils.showError('Payment failed. Please try again.');
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }
+      },
+
+      simulatePayment() {
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            // Simulate 90% success rate
+            if (Math.random() > 0.1) {
+              resolve();
+            } else {
+              reject(new Error('Payment declined'));
+            }
+          }, 2000);
+        });
+      }
+    };
+
+    // Initialize payment page
+    document.addEventListener('DOMContentLoaded', () => {
+      PaymentManager.initializePayment();
+    });
+  </script>
+</body>
+</html>

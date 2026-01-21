@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Player - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-player">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="forum.html">Forum</a></li>
+            <li><a href="learner-dashboard.html">My Learning</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="player-layout">
+    <!-- Sidebar -->
+    <aside class="player-sidebar">
+      <div class="sidebar-header">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <span class="toggle-icon">◁</span>
+        </button>
+        <h3 id="courseTitle">Course Title</h3>
+        <div class="course-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="courseProgressFill" style="width: 0%"></div>
+          </div>
+          <span class="progress-text" id="courseProgressText">0% Complete</span>
+        </div>
+      </div>
+
+      <div class="sidebar-content">
+        <div class="course-modules" id="courseModules">
+          <!-- Modules and lessons will be populated by JavaScript -->
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="player-main">
+      <div class="lesson-content">
+        <div class="lesson-header">
+          <h1 id="lessonTitle">Lesson Title</h1>
+          <div class="lesson-meta">
+            <span class="lesson-duration" id="lessonDuration">00:00</span>
+            <span class="lesson-type" id="lessonType">Video</span>
+          </div>
+        </div>
+
+        <!-- Course Title Section -->
+        <div class="course-title-section">
+          <h2 id="currentCourseTitle">Course Title</h2>
+          <div class="course-info">
+            <span class="course-instructor" id="courseInstructor">Instructor Name</span>
+            <span class="course-rating" id="courseRating">⭐ 4.5</span>
+          </div>
+        </div>
+
+        <div class="video-container">
+          <video id="lessonVideo" controls preload="metadata">
+            <source src="" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-overlay" id="videoOverlay" style="display: none;">
+            <div class="overlay-content">
+              <h3>Lesson Complete!</h3>
+              <p>Great job! You've finished this lesson.</p>
+              <button class="btn primary" id="continueBtn">Continue to Next Lesson</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-description" id="lessonDescription">
+          <!-- Lesson description will be populated by JavaScript -->
+        </div>
+
+        <!-- Lesson Resources -->
+        <div class="lesson-resources" id="lessonResources" style="display: none;">
+          <h3>Resources</h3>
+          <div class="resources-list">
+            <!-- Resources will be populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Lesson Navigation -->
+        <div class="lesson-navigation">
+          <button class="btn outline" id="prevLessonBtn" disabled>
+            <span class="btn-icon">⬅</span>
+            Previous Lesson
+          </button>
+          <div class="lesson-actions">
+            <button class="btn secondary" id="markCompleteBtn">
+              <span class="btn-icon">✓</span>
+              Mark as Complete
+            </button>
+            <button class="btn primary" id="nextLessonBtn">
+              Next Lesson
+              <span class="btn-icon">➡</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quiz Section (if available) -->
+        <div class="lesson-quiz" id="lessonQuiz" style="display: none;">
+          <div class="quiz-prompt">
+            <h3>Ready for a Quiz?</h3>
+            <p>Test your knowledge of this lesson with a quick quiz.</p>
+            <button class="btn primary" id="takeQuizBtn">Take Quiz</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Player functionality
+    let currentCourse = null;
+    let currentLessonIndex = 0;
+    let currentModuleIndex = 0;
+    let lessonStartTime = null;
+    let timeTrackingInterval = null;
+
+    function pagePlayerInit() {
+      // Check authentication
+      const session = Auth.requireLogin('login.html');
+      if (!session) return;
+
+      // Get course ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseId = urlParams.get('course');
+
+      if (!courseId) {
+        AppUtils.showError('No course specified');
+        window.location.href = 'catalog.html';
+        return;
+      }
+
+      // Check if user is enrolled
+      const enrollments = CourseManager.getEnrollments(session.userId);
+      const enrollment = enrollments.find(e => e.courseId === courseId);
+
+      if (!enrollment) {
+        AppUtils.showError('You must be enrolled in this course to access it');
+        window.location.href = 'catalog.html';
+        return;
+      }
+
+      // Load course data
+      loadCourse(courseId);
+
+      // Initialize player controls
+      initializePlayerControls();
+    }
+
+    function loadCourse(courseId) {
+      currentCourse = CourseManager.getCourseById(courseId);
+      if (!currentCourse) {
+        AppUtils.showError('Course not found');
+        window.location.href = 'catalog.html';
+        return;
+      }
+
+      // Update course title
+      document.getElementById('courseTitle').textContent = currentCourse.title;
+      document.getElementById('currentCourseTitle').textContent = currentCourse.title;
+
+      // Update course instructor and rating
+      const instructorName = currentCourse.instructorName || 'Instructor';
+      const courseRating = currentCourse.rating || 4.5;
+      document.getElementById('courseInstructor').textContent = instructorName;
+      document.getElementById('courseRating').textContent = `⭐ ${courseRating}`;
+
+      // Load course modules and lessons
+      loadCourseStructure();
+
+      // Load first lesson or resume from progress
+      const session = Auth.currentSession();
+      const enrollment = CourseManager.getEnrollments(session.userId).find(e => e.courseId === courseId);
+      const progress = enrollment.progress || {};
+
+      // Find the first incomplete lesson
+      let startLessonIndex = 0;
+      let startModuleIndex = 0;
+
+      if (currentCourse.modules) {
+        // If course has modules
+        for (let m = 0; m < currentCourse.modules.length; m++) {
+          const module = currentCourse.modules[m];
+          for (let l = 0; l < module.lessons.length; l++) {
+            const lesson = module.lessons[l];
+            if (!progress[lesson.id]) {
+              startModuleIndex = m;
+              startLessonIndex = l;
+              break;
+            }
+          }
+          if (startLessonIndex !== 0) break;
+        }
+      } else if (currentCourse.lessons) {
+        // Fallback for courses without modules
+        for (let l = 0; l < currentCourse.lessons.length; l++) {
+          if (!progress[currentCourse.lessons[l].id]) {
+            startLessonIndex = l;
+            break;
+          }
+        }
+      }
+
+      loadLesson(startModuleIndex, startLessonIndex);
+      updateCourseProgress();
+    }
+
+    function loadCourseStructure() {
+      const modulesContainer = document.getElementById('courseModules');
+      modulesContainer.innerHTML = '';
+
+      if (currentCourse.modules) {
+        // Course with modules
+        currentCourse.modules.forEach((module, moduleIndex) => {
+          const moduleElement = document.createElement('div');
+          moduleElement.className = 'module';
+          moduleElement.innerHTML = `
+            <div class="module-header">
+              <h4>${module.title}</h4>
+              <span class="module-duration">${module.duration || '0h 0m'}</span>
+            </div>
+            <ul class="lesson-list">
+              ${module.lessons.map((lesson, lessonIndex) => `
+                <li class="lesson-item ${moduleIndex === currentModuleIndex && lessonIndex === currentLessonIndex ? 'active' : ''}"
+                    data-module="${moduleIndex}" data-lesson="${lessonIndex}">
+                  <div class="lesson-info">
+                    <span class="lesson-icon">${getLessonIcon(lesson.type)}</span>
+                    <div class="lesson-details">
+                      <span class="lesson-title">${lesson.title}</span>
+                      <span class="lesson-meta">${lesson.duration || '0:00'}</span>
+                    </div>
+                  </div>
+                  <span class="lesson-status">${isLessonCompleted(lesson.id) ? '✓' : ''}</span>
+                </li>
+              `).join('')}
+            </ul>
+          `;
+          modulesContainer.appendChild(moduleElement);
+        });
+      } else if (currentCourse.lessons) {
+        // Simple course without modules
+        const lessonsElement = document.createElement('ul');
+        lessonsElement.className = 'lesson-list';
+        lessonsElement.innerHTML = currentCourse.lessons.map((lesson, index) => `
+          <li class="lesson-item ${index === currentLessonIndex ? 'active' : ''}" data-lesson="${index}">
+            <div class="lesson-info">
+              <span class="lesson-icon">${getLessonIcon(lesson.type)}</span>
+              <div class="lesson-details">
+                <span class="lesson-title">${lesson.title}</span>
+                <span class="lesson-meta">${lesson.duration || '0:00'}</span>
+              </div>
+            </div>
+            <span class="lesson-status">${isLessonCompleted(lesson.id) ? '✓' : ''}</span>
+          </li>
+        `).join('');
+        modulesContainer.appendChild(lessonsElement);
+      }
+
+      // Add click listeners
+      document.querySelectorAll('.lesson-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+          const moduleIndex = parseInt(item.dataset.module) || 0;
+          const lessonIndex = parseInt(item.dataset.lesson);
+          loadLesson(moduleIndex, lessonIndex);
+        });
+      });
+    }
+
+    function loadLesson(moduleIndex, lessonIndex) {
+      // Stop previous time tracking
+      if (timeTrackingInterval) {
+        clearInterval(timeTrackingInterval);
+        timeTrackingInterval = null;
+      }
+
+      currentModuleIndex = moduleIndex;
+      currentLessonIndex = lessonIndex;
+
+      let lesson;
+      if (currentCourse.modules) {
+        lesson = currentCourse.modules[moduleIndex].lessons[lessonIndex];
+      } else {
+        lesson = currentCourse.lessons[lessonIndex];
+      }
+
+      if (!lesson) return;
+
+      // Start time tracking for this lesson
+      startLessonTimeTracking(lesson.id);
+
+      // Update UI
+      document.getElementById('lessonTitle').textContent = lesson.title;
+      document.getElementById('lessonDuration').textContent = lesson.duration || '00:00';
+      document.getElementById('lessonType').textContent = lesson.type || 'Video';
+
+      // Load video
+      const video = document.getElementById('lessonVideo');
+      video.src = lesson.content || '';
+
+      // Load description
+      const descriptionContainer = document.getElementById('lessonDescription');
+      if (lesson.description) {
+        descriptionContainer.innerHTML = `<h3>About this lesson</h3><p>${lesson.description}</p>`;
+        descriptionContainer.style.display = 'block';
+      } else {
+        descriptionContainer.style.display = 'none';
+      }
+
+      // Load resources
+      const resourcesContainer = document.getElementById('lessonResources');
+      if (lesson.resources && lesson.resources.length > 0) {
+        const resourcesList = lesson.resources.map(resource => `
+          <div class="resource-item">
+            <a href="${resource.url}" target="_blank" class="resource-link">
+              <span class="resource-icon">${getResourceIcon(resource.type)}</span>
+              <span class="resource-title">${resource.title}</span>
+            </a>
+          </div>
+        `).join('');
+        resourcesContainer.querySelector('.resources-list').innerHTML = resourcesList;
+        resourcesContainer.style.display = 'block';
+      } else {
+        resourcesContainer.style.display = 'none';
+      }
+
+      // Add live class button if available
+      if (lesson.liveClassUrl) {
+        const liveClassBtn = document.createElement('button');
+        liveClassBtn.className = 'btn secondary';
+        liveClassBtn.innerHTML = '<span class="btn-icon">📹</span>Join Live Class';
+        liveClassBtn.onclick = () => window.open(lesson.liveClassUrl, '_blank');
+        document.querySelector('.lesson-actions').appendChild(liveClassBtn);
+      }
+
+      // Update navigation buttons
+      updateNavigationButtons();
+
+      // Update active lesson in sidebar
+      document.querySelectorAll('.lesson-item').forEach(item => {
+        item.classList.remove('active');
+      });
+      const activeItem = document.querySelector(`[data-module="${moduleIndex}"][data-lesson="${lessonIndex}"]`) ||
+                        document.querySelector(`[data-lesson="${lessonIndex}"]`);
+      if (activeItem) {
+        activeItem.classList.add('active');
+      }
+
+      // Show/hide quiz section
+      const quizSection = document.getElementById('lessonQuiz');
+      quizSection.style.display = lesson.hasQuiz ? 'block' : 'none';
+    }
+
+    function updateNavigationButtons() {
+      const prevBtn = document.getElementById('prevLessonBtn');
+      const nextBtn = document.getElementById('nextLessonBtn');
+
+      // Previous button
+      if (currentCourse.modules) {
+        prevBtn.disabled = currentModuleIndex === 0 && currentLessonIndex === 0;
+      } else {
+        prevBtn.disabled = currentLessonIndex === 0;
+      }
+
+      // Next button
+      let isLastLesson = false;
+      if (currentCourse.modules) {
+        const lastModule = currentCourse.modules[currentCourse.modules.length - 1];
+        isLastLesson = currentModuleIndex === currentCourse.modules.length - 1 &&
+                      currentLessonIndex === lastModule.lessons.length - 1;
+      } else {
+        isLastLesson = currentLessonIndex === currentCourse.lessons.length - 1;
+      }
+      nextBtn.disabled = isLastLesson;
+      nextBtn.textContent = isLastLesson ? 'Finish Course' : 'Next Lesson ➡';
+    }
+
+    function initializePlayerControls() {
+      // Sidebar toggle
+      document.getElementById('sidebarToggle').addEventListener('click', () => {
+        document.querySelector('.player-layout').classList.toggle('sidebar-collapsed');
+      });
+
+      // Navigation buttons
+      document.getElementById('prevLessonBtn').addEventListener('click', () => {
+        navigateLesson(-1);
+      });
+
+      document.getElementById('nextLessonBtn').addEventListener('click', () => {
+        navigateLesson(1);
+      });
+
+      document.getElementById('markCompleteBtn').addEventListener('click', () => {
+        markCurrentLessonComplete();
+      });
+
+      document.getElementById('takeQuizBtn').addEventListener('click', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        window.location.href = `quiz.html?course=${urlParams.get('course')}`;
+      });
+
+      // Video events
+      const video = document.getElementById('lessonVideo');
+      video.addEventListener('ended', () => {
+        document.getElementById('videoOverlay').style.display = 'flex';
+      });
+
+      document.getElementById('continueBtn').addEventListener('click', () => {
+        document.getElementById('videoOverlay').style.display = 'none';
+        navigateLesson(1);
+      });
+    }
+
+    function navigateLesson(direction) {
+      if (currentCourse.modules) {
+        // Handle module-based navigation
+        let newModuleIndex = currentModuleIndex;
+        let newLessonIndex = currentLessonIndex + direction;
+
+        if (newLessonIndex < 0) {
+          if (newModuleIndex > 0) {
+            newModuleIndex--;
+            newLessonIndex = currentCourse.modules[newModuleIndex].lessons.length - 1;
+          } else {
+            return; // Already at first lesson
+          }
+        } else if (newLessonIndex >= currentCourse.modules[newModuleIndex].lessons.length) {
+          if (newModuleIndex < currentCourse.modules.length - 1) {
+            newModuleIndex++;
+            newLessonIndex = 0;
+          } else {
+            return; // Already at last lesson
+          }
+        }
+
+        loadLesson(newModuleIndex, newLessonIndex);
+      } else {
+        // Handle simple lesson navigation
+        const newIndex = currentLessonIndex + direction;
+        if (newIndex >= 0 && newIndex < currentCourse.lessons.length) {
+          loadLesson(0, newIndex);
+        }
+      }
+    }
+
+    function markCurrentLessonComplete() {
+      const session = Auth.currentSession();
+      let lesson;
+
+      if (currentCourse.modules) {
+        lesson = currentCourse.modules[currentModuleIndex].lessons[currentLessonIndex];
+      } else {
+        lesson = currentCourse.lessons[currentLessonIndex];
+      }
+
+      CourseManager.markLessonComplete(session.userId, currentCourse.id, lesson.id);
+      updateCourseProgress();
+      loadCourseStructure(); // Refresh sidebar to show completion
+
+      AppUtils.showSuccess('Lesson marked as complete!');
+    }
+
+    function updateCourseProgress() {
+      const session = Auth.currentSession();
+      const enrollment = CourseManager.getEnrollments(session.userId).find(e => e.courseId === currentCourse.id);
+
+      if (enrollment && enrollment.progressPercent !== undefined) {
+        const progressFill = document.getElementById('courseProgressFill');
+        const progressText = document.getElementById('courseProgressText');
+
+        progressFill.style.width = enrollment.progressPercent + '%';
+        progressText.textContent = enrollment.progressPercent + '% Complete';
+      }
+    }
+
+    function isLessonCompleted(lessonId) {
+      const session = Auth.currentSession();
+      const enrollment = CourseManager.getEnrollments(session.userId).find(e => e.courseId === currentCourse.id);
+      return enrollment && enrollment.progress && enrollment.progress[lessonId];
+    }
+
+    function getLessonIcon(type) {
+      const icons = {
+        'video': '🎥',
+        'text': '📄',
+        'quiz': '❓',
+        'assignment': '📝'
+      };
+      return icons[type] || '📚';
+    }
+
+    function getResourceIcon(type) {
+      const icons = {
+        'pdf': '📄',
+        'link': '🔗',
+        'download': '⬇',
+        'code': '💻'
+      };
+      return icons[type] || '📎';
+    }
+
+    function startLessonTimeTracking(lessonId) {
+      lessonStartTime = new Date();
+      timeTrackingInterval = setInterval(() => {
+        const session = Auth.currentSession();
+        if (session) {
+          const currentTime = new Date();
+          const timeSpent = Math.floor((currentTime - lessonStartTime) / 1000); // in seconds
+          CourseManager.updateLessonTime(session.userId, currentCourse.id, lessonId, timeSpent);
+        }
+      }, 30000); // Update every 30 seconds
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', pagePlayerInit);
+  </script>
+</body>
+</html>

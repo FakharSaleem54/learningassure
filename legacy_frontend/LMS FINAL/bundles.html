@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course Bundles - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="subscriptions.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-bundles">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="bundles.html" class="active">Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="forum.html">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Course Bundles</h1>
+      <p>Save money with curated course collections and subscription plans</p>
+    </div>
+
+    <!-- Subscription Plans -->
+    <section class="subscription-plans">
+      <h2>Subscription Plans</h2>
+      <div class="plans-grid">
+        <div class="plan-card featured">
+          <div class="plan-header">
+            <h3>Monthly Access</h3>
+            <div class="plan-price">
+              <span class="currency">$</span>
+              <span class="amount">29</span>
+              <span class="period">/month</span>
+            </div>
+            <p>Perfect for continuous learning</p>
+          </div>
+          <ul class="plan-features">
+            <li>✅ Access to all courses</li>
+            <li>✅ Downloadable resources</li>
+            <li>✅ Certificate of completion</li>
+            <li>✅ Priority support</li>
+            <li>✅ Cancel anytime</li>
+          </ul>
+          <button class="btn primary full-width" onclick="Bundles.subscribe('monthly')">Subscribe Now</button>
+        </div>
+
+        <div class="plan-card popular">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-header">
+            <h3>Annual Access</h3>
+            <div class="plan-price">
+              <span class="currency">$</span>
+              <span class="amount">299</span>
+              <span class="period">/year</span>
+            </div>
+            <p>Best value for serious learners</p>
+          </div>
+          <ul class="plan-features">
+            <li>✅ Everything in Monthly</li>
+            <li>✅ 2 months free</li>
+            <li>✅ Exclusive webinars</li>
+            <li>✅ 1-on-1 mentoring</li>
+            <li>✅ Early access to new courses</li>
+          </ul>
+          <button class="btn primary full-width" onclick="Bundles.subscribe('annual')">Subscribe Now</button>
+        </div>
+
+        <div class="plan-card">
+          <div class="plan-header">
+            <h3>Lifetime Access</h3>
+            <div class="plan-price">
+              <span class="currency">$</span>
+              <span class="amount">999</span>
+              <span class="period">one-time</span>
+            </div>
+            <p>Learn forever with one payment</p>
+          </div>
+          <ul class="plan-features">
+            <li>✅ Everything in Annual</li>
+            <li>✅ Lifetime access</li>
+            <li>✅ VIP community access</li>
+            <li>✅ Personal learning advisor</li>
+            <li>✅ Custom course requests</li>
+          </ul>
+          <button class="btn primary full-width" onclick="Bundles.subscribe('lifetime')">Get Lifetime Access</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Course Bundles -->
+    <section class="course-bundles">
+      <h2>Course Bundles</h2>
+      <div class="bundles-grid" id="bundlesGrid">
+        <!-- Bundles will be populated here -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Bundle Details Modal -->
+  <div id="bundleModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3 id="bundleModalTitle">Bundle Details</h3>
+        <button class="modal-close" onclick="Bundles.closeBundleModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="bundleModalContent">
+        <!-- Bundle details will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Course Bundles JavaScript
+    const Bundles = {
+      bundles: [],
+
+      init() {
+        this.loadBundles();
+        this.renderBundles();
+      },
+
+      loadBundles() {
+        // Mock bundle data - in real implementation, this would come from backend
+        this.bundles = [
+          {
+            id: 'bundle-1',
+            title: 'Web Development Mastery',
+            description: 'Complete web development bundle from basics to advanced',
+            courses: [
+              { id: 'course-1', title: 'HTML & CSS Fundamentals', price: 49 },
+              { id: 'course-2', title: 'JavaScript Mastery', price: 79 },
+              { id: 'course-3', title: 'React Development', price: 99 },
+              { id: 'course-4', title: 'Node.js Backend', price: 89 }
+            ],
+            originalPrice: 316,
+            bundlePrice: 199,
+            discount: 37,
+            category: 'Technology',
+            level: 'Beginner to Advanced',
+            duration: '40 hours',
+            enrolledCount: 1250,
+            rating: 4.8,
+            thumbnail: 'assets/images/web-dev-bundle.jpg'
+          },
+          {
+            id: 'bundle-2',
+            title: 'Data Science Essentials',
+            description: 'Essential skills for data science and analytics',
+            courses: [
+              { id: 'course-5', title: 'Python for Data Science', price: 69 },
+              { id: 'course-6', title: 'Statistics & Probability', price: 59 },
+              { id: 'course-7', title: 'Machine Learning Basics', price: 89 },
+              { id: 'course-8', title: 'Data Visualization', price: 49 }
+            ],
+            originalPrice: 266,
+            bundlePrice: 149,
+            discount: 44,
+            category: 'Data Science',
+            level: 'Intermediate',
+            duration: '35 hours',
+            enrolledCount: 890,
+            rating: 4.7,
+            thumbnail: 'assets/images/data-science-bundle.jpg'
+          },
+          {
+            id: 'bundle-3',
+            title: 'Digital Marketing Pro',
+            description: 'Complete digital marketing toolkit for modern businesses',
+            courses: [
+              { id: 'course-9', title: 'SEO Fundamentals', price: 59 },
+              { id: 'course-10', title: 'Social Media Marketing', price: 49 },
+              { id: 'course-11', title: 'Google Ads Mastery', price: 79 },
+              { id: 'course-12', title: 'Email Marketing', price: 39 }
+            ],
+            originalPrice: 226,
+            bundlePrice: 129,
+            discount: 43,
+            category: 'Marketing',
+            level: 'All Levels',
+            duration: '28 hours',
+            enrolledCount: 2100,
+            rating: 4.9,
+            thumbnail: 'assets/images/marketing-bundle.jpg'
+          }
+        ];
+      },
+
+      renderBundles() {
+        const grid = document.getElementById('bundlesGrid');
+
+        grid.innerHTML = this.bundles.map(bundle => `
+          <div class="bundle-card" data-bundle-id="${bundle.id}">
+            <div class="bundle-header">
+              <div class="bundle-thumbnail">
+                <img src="${bundle.thumbnail || 'assets/images/bundle-placeholder.jpg'}" alt="${bundle.title}" onerror="this.src='assets/images/bundle-placeholder.jpg'">
+              </div>
+              <div class="bundle-meta">
+                <span class="bundle-category">${bundle.category}</span>
+                <div class="bundle-rating">
+                  <span class="stars">${'⭐'.repeat(Math.floor(bundle.rating))}</span>
+                  <span class="rating-value">${bundle.rating}</span>
+                  <span class="enrolled-count">(${bundle.enrolledCount} enrolled)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bundle-content">
+              <h3>${bundle.title}</h3>
+              <p class="bundle-description">${bundle.description}</p>
+
+              <div class="bundle-details">
+                <span class="detail-item">📚 ${bundle.courses.length} courses</span>
+                <span class="detail-item">⏱️ ${bundle.duration}</span>
+                <span class="detail-item">🎯 ${bundle.level}</span>
+              </div>
+
+              <div class="bundle-courses-preview">
+                <h4>Included Courses:</h4>
+                <ul>
+                  ${bundle.courses.slice(0, 3).map(course => `<li>${course.title}</li>`).join('')}
+                  ${bundle.courses.length > 3 ? `<li>...and ${bundle.courses.length - 3} more</li>` : ''}
+                </ul>
+              </div>
+            </div>
+
+            <div class="bundle-footer">
+              <div class="bundle-pricing">
+                <div class="original-price">$${bundle.originalPrice}</div>
+                <div class="bundle-price">
+                  <span class="current-price">$${bundle.bundlePrice}</span>
+                  <span class="discount-badge">${bundle.discount}% OFF</span>
+                </div>
+              </div>
+              <div class="bundle-actions">
+                <button class="btn outline" onclick="Bundles.viewBundleDetails('${bundle.id}')">View Details</button>
+                <button class="btn primary" onclick="Bundles.purchaseBundle('${bundle.id}')">Get Bundle</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      subscribe(planType) {
+        if (!Auth.getCurrentUser()) {
+          alert('Please log in to subscribe');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Redirect to payment with subscription details
+        const planDetails = {
+          monthly: { price: 29, period: 'month' },
+          annual: { price: 299, period: 'year' },
+          lifetime: { price: 999, period: 'lifetime' }
+        };
+
+        const plan = planDetails[planType];
+        window.location.href = `payment.html?type=subscription&plan=${planType}&price=${plan.price}&period=${plan.period}`;
+      },
+
+      viewBundleDetails(bundleId) {
+        const bundle = this.bundles.find(b => b.id === bundleId);
+        if (!bundle) return;
+
+        const modal = document.getElementById('bundleModal');
+        const title = document.getElementById('bundleModalTitle');
+        const content = document.getElementById('bundleModalContent');
+
+        title.textContent = bundle.title;
+
+        content.innerHTML = `
+          <div class="bundle-details-modal">
+            <div class="bundle-overview">
+              <div class="bundle-image">
+                <img src="${bundle.thumbnail || 'assets/images/bundle-placeholder.jpg'}" alt="${bundle.title}" onerror="this.src='assets/images/bundle-placeholder.jpg'">
+              </div>
+              <div class="bundle-info">
+                <div class="bundle-meta">
+                  <span class="category">${bundle.category}</span>
+                  <span class="level">${bundle.level}</span>
+                  <span class="duration">${bundle.duration}</span>
+                </div>
+                <p class="description">${bundle.description}</p>
+                <div class="bundle-stats">
+                  <div class="stat">
+                    <span class="stat-value">${bundle.enrolledCount}</span>
+                    <span class="stat-label">Students Enrolled</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-value">${bundle.rating}</span>
+                    <span class="stat-label">Average Rating</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat-value">${bundle.discount}%</span>
+                    <span class="stat-label">You Save</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bundle-courses-list">
+              <h4>Courses Included (${bundle.courses.length})</h4>
+              <div class="courses-grid">
+                ${bundle.courses.map(course => `
+                  <div class="course-item">
+                    <div class="course-info">
+                      <h5>${course.title}</h5>
+                      <span class="course-price">$${course.price}</span>
+                    </div>
+                    <button class="btn small outline" onclick="Bundles.viewCourse('${course.id}')">View Course</button>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="bundle-purchase">
+              <div class="pricing-summary">
+                <div class="pricing-row">
+                  <span>Individual Courses:</span>
+                  <span class="original-price">$${bundle.originalPrice}</span>
+                </div>
+                <div class="pricing-row">
+                  <span>Bundle Price:</span>
+                  <span class="bundle-price">$${bundle.bundlePrice}</span>
+                </div>
+                <div class="pricing-row total">
+                  <span>You Save:</span>
+                  <span class="savings">$${bundle.originalPrice - bundle.bundlePrice} (${bundle.discount}%)</span>
+                </div>
+              </div>
+              <button class="btn primary large" onclick="Bundles.purchaseBundle('${bundle.id}')">
+                Purchase Bundle - $${bundle.bundlePrice}
+              </button>
+            </div>
+          </div>
+        `;
+
+        modal.style.display = 'flex';
+      },
+
+      closeBundleModal() {
+        document.getElementById('bundleModal').style.display = 'none';
+      },
+
+      purchaseBundle(bundleId) {
+        if (!Auth.getCurrentUser()) {
+          alert('Please log in to purchase bundles');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const bundle = this.bundles.find(b => b.id === bundleId);
+        if (!bundle) return;
+
+        // Redirect to payment
+        window.location.href = `payment.html?type=bundle&id=${bundleId}&price=${bundle.bundlePrice}`;
+      },
+
+      viewCourse(courseId) {
+        // Redirect to course page
+        window.location.href = `player.html?course=${courseId}`;
+      }
+    };
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      Bundles.init();
+    });
+  </script>
+</body>
+</html>

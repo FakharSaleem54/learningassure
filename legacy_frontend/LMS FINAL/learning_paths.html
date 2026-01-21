@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learning Paths - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-learning-paths">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="admin-dashboard.html">Dashboard</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="learning_paths.html" class="active">Learning Paths</a></li>
+            <li><a href="forum.html">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Learning Paths</h1>
+      <p>Create structured learning journeys with prerequisites and sequential courses</p>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button class="btn primary" onclick="LearningPaths.createNewPath()">
+        <span class="btn-icon">➕</span>
+        Create Learning Path
+      </button>
+      <button class="btn outline" onclick="LearningPaths.viewAllPaths()">
+        <span class="btn-icon">📚</span>
+        Browse All Paths
+      </button>
+    </div>
+
+    <!-- Learning Paths Grid -->
+    <div class="learning-paths-grid" id="learningPathsGrid">
+      <!-- Learning paths will be populated here -->
+    </div>
+  </div>
+
+  <!-- Create Learning Path Modal -->
+  <div id="createPathModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h3>Create Learning Path</h3>
+        <button class="modal-close" onclick="LearningPaths.closeCreateModal()">&times;</button>
+      </div>
+      <form id="createPathForm" onsubmit="event.preventDefault(); LearningPaths.submitCreatePath(this)">
+        <div class="form-section">
+          <h4>Basic Information</h4>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pathTitle">Path Title *</label>
+              <input type="text" id="pathTitle" name="title" class="input" required>
+            </div>
+            <div class="form-group">
+              <label for="pathCategory">Category</label>
+              <select id="pathCategory" name="category" class="input">
+                <option value="Technology">Technology</option>
+                <option value="Business">Business</option>
+                <option value="Design">Design</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="pathDescription">Description</label>
+            <textarea id="pathDescription" name="description" class="input" rows="4" placeholder="Describe this learning path..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="pathDifficulty">Difficulty Level</label>
+              <select id="pathDifficulty" name="difficulty" class="input">
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="estimatedDuration">Estimated Duration (hours)</label>
+              <input type="number" id="estimatedDuration" name="duration" class="input" min="1">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h4>Course Sequence</h4>
+          <p>Add courses in the order they should be completed. Each course can have prerequisites.</p>
+
+          <div id="courseSequence" class="course-sequence">
+            <div class="sequence-placeholder">
+              <p>No courses added yet. Click "Add Course" to start building your path.</p>
+            </div>
+          </div>
+
+          <button type="button" class="btn outline" onclick="LearningPaths.addCourseToPath()">
+            <span class="btn-icon">➕</span>
+            Add Course
+          </button>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn outline" onclick="LearningPaths.closeCreateModal()">Cancel</button>
+          <button type="submit" class="btn primary">Create Learning Path</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Course Modal -->
+  <div id="addCourseModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Course to Path</h3>
+        <button class="modal-close" onclick="LearningPaths.closeAddCourseModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="course-selection">
+          <input type="text" id="courseSearch" placeholder="Search courses..." class="input" onkeyup="LearningPaths.filterCourses(this.value)">
+          <div id="availableCourses" class="available-courses">
+            <!-- Courses will be populated here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Learning Paths JavaScript
+    const LearningPaths = {
+      currentPath: null,
+      availableCourses: [],
+
+      init() {
+        this.loadLearningPaths();
+        this.loadAvailableCourses();
+      },
+
+      loadLearningPaths() {
+        // Load learning paths from data (would be stored in localStorage or database)
+        const paths = this.getStoredPaths();
+        this.renderPaths(paths);
+      },
+
+      getStoredPaths() {
+        // Mock data - in real implementation, this would come from backend
+        return [
+          {
+            id: 'path-1',
+            title: 'Full Stack Web Development',
+            description: 'Complete journey from frontend to backend development',
+            category: 'Technology',
+            difficulty: 'Intermediate',
+            duration: 120,
+            courses: [
+              { id: 'course-1', title: 'HTML & CSS Fundamentals', required: true },
+              { id: 'course-2', title: 'JavaScript Basics', required: true },
+              { id: 'course-3', title: 'React Development', required: false }
+            ],
+            enrolledCount: 245,
+            completionRate: 68
+          }
+        ];
+      },
+
+      renderPaths(paths) {
+        const grid = document.getElementById('learningPathsGrid');
+
+        if (paths.length === 0) {
+          grid.innerHTML = '<div class="no-paths"><p>No learning paths available yet.</p></div>';
+          return;
+        }
+
+        grid.innerHTML = paths.map(path => `
+          <div class="learning-path-card" data-path-id="${path.id}">
+            <div class="path-header">
+              <h3>${path.title}</h3>
+              <span class="badge ${path.difficulty.toLowerCase()}">${path.difficulty}</span>
+            </div>
+            <p class="path-description">${path.description}</p>
+            <div class="path-meta">
+              <span class="meta-item">📚 ${path.courses.length} Courses</span>
+              <span class="meta-item">⏱️ ${path.duration} hours</span>
+              <span class="meta-item">👥 ${path.enrolledCount} enrolled</span>
+            </div>
+            <div class="path-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${path.completionRate}%"></div>
+              </div>
+              <span class="progress-text">${path.completionRate}% completion rate</span>
+            </div>
+            <div class="path-courses">
+              <h4>Course Sequence:</h4>
+              <ul>
+                ${path.courses.map(course => `
+                  <li class="${course.required ? 'required' : 'optional'}">
+                    ${course.required ? '🔒' : '🔓'} ${course.title}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+            <div class="path-actions">
+              <button class="btn primary" onclick="LearningPaths.enrollInPath('${path.id}')">Enroll in Path</button>
+              <button class="btn outline" onclick="LearningPaths.viewPathDetails('${path.id}')">View Details</button>
+            </div>
+          </div>
+        `).join('');
+      },
+
+      loadAvailableCourses() {
+        // Load all available courses
+        this.availableCourses = Courses.getAllCourses();
+      },
+
+      createNewPath() {
+        this.currentPath = {
+          id: Date.now().toString(),
+          title: '',
+          description: '',
+          category: 'Technology',
+          difficulty: 'Beginner',
+          duration: 0,
+          courses: []
+        };
+        document.getElementById('createPathModal').style.display = 'flex';
+      },
+
+      closeCreateModal() {
+        document.getElementById('createPathModal').style.display = 'none';
+        document.getElementById('createPathForm').reset();
+        this.currentPath = null;
+      },
+
+      submitCreatePath(form) {
+        const formData = new FormData(form);
+
+        this.currentPath.title = formData.get('title');
+        this.currentPath.description = formData.get('description');
+        this.currentPath.category = formData.get('category');
+        this.currentPath.difficulty = formData.get('difficulty');
+        this.currentPath.duration = parseInt(formData.get('duration')) || 0;
+
+        // Save the learning path
+        this.savePath(this.currentPath);
+
+        // Refresh the display
+        this.loadLearningPaths();
+        this.closeCreateModal();
+
+        alert('Learning path created successfully!');
+      },
+
+      addCourseToPath() {
+        document.getElementById('addCourseModal').style.display = 'flex';
+        this.renderAvailableCourses();
+      },
+
+      closeAddCourseModal() {
+        document.getElementById('addCourseModal').style.display = 'none';
+      },
+
+      renderAvailableCourses(filter = '') {
+        const container = document.getElementById('availableCourses');
+        const filteredCourses = this.availableCourses.filter(course =>
+          course.title.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        container.innerHTML = filteredCourses.map(course => `
+          <div class="course-option" onclick="LearningPaths.selectCourse('${course.id}')">
+            <div class="course-info">
+              <h4>${course.title}</h4>
+              <p>${course.description || 'No description'}</p>
+              <span class="course-price">$${course.price}</span>
+            </div>
+            <button class="btn small primary">Add to Path</button>
+          </div>
+        `).join('');
+      },
+
+      filterCourses(query) {
+        this.renderAvailableCourses(query);
+      },
+
+      selectCourse(courseId) {
+        const course = this.availableCourses.find(c => c.id === courseId);
+        if (!course) return;
+
+        // Add course to current path
+        this.currentPath.courses.push({
+          id: course.id,
+          title: course.title,
+          required: true // Default to required
+        });
+
+        this.updateCourseSequence();
+        this.closeAddCourseModal();
+      },
+
+      updateCourseSequence() {
+        const sequence = document.getElementById('courseSequence');
+
+        if (this.currentPath.courses.length === 0) {
+          sequence.innerHTML = '<div class="sequence-placeholder"><p>No courses added yet. Click "Add Course" to start building your path.</p></div>';
+          return;
+        }
+
+        sequence.innerHTML = `
+          <div class="sequence-list">
+            ${this.currentPath.courses.map((course, index) => `
+              <div class="sequence-item" data-course-id="${course.id}">
+                <div class="sequence-number">${index + 1}</div>
+                <div class="sequence-content">
+                  <h4>${course.title}</h4>
+                  <div class="sequence-controls">
+                    <label>
+                      <input type="checkbox" ${course.required ? 'checked' : ''} onchange="LearningPaths.toggleRequired('${course.id}', this.checked)">
+                      Required
+                    </label>
+                    <button class="btn-icon small" onclick="LearningPaths.moveCourseUp('${course.id}')">⬆️</button>
+                    <button class="btn-icon small" onclick="LearningPaths.moveCourseDown('${course.id}')">⬇️</button>
+                    <button class="btn-icon small danger" onclick="LearningPaths.removeCourse('${course.id}')">🗑️</button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      },
+
+      toggleRequired(courseId, required) {
+        const course = this.currentPath.courses.find(c => c.id === courseId);
+        if (course) course.required = required;
+      },
+
+      moveCourseUp(courseId) {
+        const index = this.currentPath.courses.findIndex(c => c.id === courseId);
+        if (index > 0) {
+          [this.currentPath.courses[index], this.currentPath.courses[index - 1]] =
+          [this.currentPath.courses[index - 1], this.currentPath.courses[index]];
+          this.updateCourseSequence();
+        }
+      },
+
+      moveCourseDown(courseId) {
+        const index = this.currentPath.courses.findIndex(c => c.id === courseId);
+        if (index < this.currentPath.courses.length - 1) {
+          [this.currentPath.courses[index], this.currentPath.courses[index + 1]] =
+          [this.currentPath.courses[index + 1], this.currentPath.courses[index]];
+          this.updateCourseSequence();
+        }
+      },
+
+      removeCourse(courseId) {
+        this.currentPath.courses = this.currentPath.courses.filter(c => c.id !== courseId);
+        this.updateCourseSequence();
+      },
+
+      savePath(path) {
+        // In real implementation, save to backend
+        const paths = this.getStoredPaths();
+        paths.push(path);
+        localStorage.setItem('learningPaths', JSON.stringify(paths));
+      },
+
+      enrollInPath(pathId) {
+        // Check if user is logged in
+        if (!Auth.getCurrentUser()) {
+          alert('Please log in to enroll in learning paths');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Implement enrollment logic
+        alert('Enrollment functionality will be implemented');
+      },
+
+      viewPathDetails(pathId) {
+        // Show detailed view of the learning path
+        alert('Detailed view will be implemented');
+      },
+
+      viewAllPaths() {
+        // Already showing all paths
+        this.loadLearningPaths();
+      }
+    };
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      LearningPaths.init();
+    });
+  </script>
+</body>
+</html>

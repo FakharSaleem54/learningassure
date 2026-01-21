@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <title>Learning Assure — Home</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="ai_recommendation.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-home">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="bundles.html">Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="forum.html">Community</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1>Learning Assure — Learn by doing</h1>
+          <p>Practical courses, verified certificates, and instructors you can trust. Master new skills with our comprehensive learning platform featuring interactive courses, live sessions, and personalized learning paths.</p>
+          <div class="hero-actions">
+            <a href="catalog.html" class="btn primary lg">Browse Courses</a>
+            <a href="learning_paths.html" class="btn outline lg">Explore Learning Paths</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="assets/images/logo.png" alt="Learning illustration">
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon">👥</div>
+            <div class="stat-content">
+              <h3>10,000+</h3>
+              <p>Active Learners</p>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">📚</div>
+            <div class="stat-content">
+              <h3>500+</h3>
+              <p>Courses Available</p>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-content">
+              <h3>95%</h3>
+              <p>Completion Rate</p>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-content">
+              <h3>4.8/5</h3>
+              <p>Average Rating</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="section-header">
+        <h2>Featured Courses</h2>
+        <p>Start your learning journey with our most popular courses</p>
+      </div>
+      <div id="home-featured" class="course-grid"></div>
+      <div class="text-center mt-4">
+        <a href="catalog.html" class="btn primary">View All Courses</a>
+      </div>
+    </section>
+
+    <!-- Learning Paths Preview -->
+    <section class="learning-paths-preview">
+      <div class="container">
+        <div class="section-header">
+          <h2>Learning Paths</h2>
+          <p>Structured learning journeys designed for career advancement</p>
+        </div>
+        <div class="paths-grid">
+          <div class="path-card">
+            <div class="path-icon">💻</div>
+            <h3>Web Development</h3>
+            <p>Complete path from HTML/CSS to full-stack development</p>
+            <div class="path-meta">
+              <span>12 Courses</span>
+              <span>6 Months</span>
+            </div>
+            <a href="learning_paths.html" class="btn outline">Explore Path</a>
+          </div>
+          <div class="path-card">
+            <div class="path-icon">📊</div>
+            <h3>Data Science</h3>
+            <p>Master data analysis, machine learning, and AI</p>
+            <div class="path-meta">
+              <span>15 Courses</span>
+              <span>8 Months</span>
+            </div>
+            <a href="learning_paths.html" class="btn outline">Explore Path</a>
+          </div>
+          <div class="path-card">
+            <div class="path-icon">🎨</div>
+            <h3>UI/UX Design</h3>
+            <p>Design beautiful and functional user experiences</p>
+            <div class="path-meta">
+              <span>10 Courses</span>
+              <span>5 Months</span>
+            </div>
+            <a href="learning_paths.html" class="btn outline">Explore Path</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bundles Preview -->
+    <section class="bundles-preview">
+      <div class="container">
+        <div class="section-header">
+          <h2>Course Bundles</h2>
+          <p>Save money with our curated course packages</p>
+        </div>
+        <div class="bundles-grid">
+          <div class="bundle-card">
+            <div class="bundle-header">
+              <h3>Full-Stack Developer Bundle</h3>
+              <div class="bundle-price">
+                <span class="original">$499</span>
+                <span class="discounted">$299</span>
+              </div>
+            </div>
+            <ul class="bundle-courses">
+              <li>HTML & CSS Fundamentals</li>
+              <li>JavaScript Mastery</li>
+              <li>React Development</li>
+              <li>Node.js Backend</li>
+              <li>Database Design</li>
+            </ul>
+            <a href="bundles.html" class="btn primary">Get Bundle</a>
+          </div>
+          <div class="bundle-card">
+            <div class="bundle-header">
+              <h3>Digital Marketing Suite</h3>
+              <div class="bundle-price">
+                <span class="original">$349</span>
+                <span class="discounted">$199</span>
+              </div>
+            </div>
+            <ul class="bundle-courses">
+              <li>SEO Fundamentals</li>
+              <li>Social Media Marketing</li>
+              <li>Content Marketing</li>
+              <li>Google Ads</li>
+              <li>Email Marketing</li>
+            </ul>
+            <a href="bundles.html" class="btn primary">Get Bundle</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Home page init
+    function pageHomeInit(){
+      // show featured courses (top 3)
+      const courses = CourseManager.getAllCourses();
+      const container = document.getElementById('home-featured');
+      container.innerHTML = '';
+
+      if (courses.length === 0) {
+        container.innerHTML = '<p class="text-center">No courses available yet.</p>';
+        return;
+      }
+
+      courses.slice(0, 3).forEach(course => {
+        const card = document.createElement('div');
+        card.className = 'course-card fade-in';
+        card.innerHTML = `
+          <div class="course-thumb">
+            <img src="${course.thumbnail}" alt="${course.title}">
+          </div>
+          <div class="course-meta">
+            <h3>${course.title}</h3>
+            <p class="small">By ${course.instructor} • ${course.level}</p>
+            <div class="price">$${course.price}</div>
+            <div class="course-actions">
+              <a class="btn primary" href="player.html?course=${course.id}">Start Course</a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', pageHomeInit);
+  </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Course Catalog — Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-catalog">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="catalog.html" class="active">Courses</a></li>
+            <li><a href="bundles.html">Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="forum.html">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="mb-4">
+      <h1>Course Catalog</h1>
+      <p class="text-secondary">Discover courses to advance your skills and career</p>
+    </div>
+
+    <div class="flex gap-4 mb-4 items-center">
+      <div class="flex-1">
+        <input id="catalog-search" class="input" placeholder="Search courses..." type="search">
+      </div>
+      <select id="catalog-filter" class="input select">
+        <option value="">All categories</option>
+      </select>
+      <select id="level-filter" class="input select">
+        <option value="">All levels</option>
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+      </select>
+    </div>
+
+    <div id="catalog-list" class="course-grid"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function pageCatalogInit(){
+      const courses = CourseManager.getAllCourses();
+      const categories = [...new Set(courses.map(c => c.category))].filter(Boolean);
+      const filter = document.getElementById('catalog-filter');
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        filter.appendChild(option);
+      });
+
+      const render = (list) => {
+        const container = document.getElementById('catalog-list');
+        container.innerHTML = '';
+
+        if (list.length === 0) {
+          container.innerHTML = '<p class="text-center text-secondary">No courses found matching your criteria.</p>';
+          return;
+        }
+
+        list.forEach(course => {
+          const card = document.createElement('div');
+          card.className = 'course-card fade-in';
+          card.innerHTML = `
+            <div class="course-thumb">
+              <img src="${course.thumbnail}" alt="${course.title}">
+            </div>
+            <div class="course-meta">
+              <h3>${course.title}</h3>
+              <p class="small">By ${course.instructor} • ${course.level}</p>
+              <p class="small">${course.lessons ? course.lessons.length : 0} lessons • ${course.category || 'General'}</p>
+              <div class="price">$${course.price}</div>
+              <div class="course-actions">
+                <a class="btn primary" href="player.html?course=${course.id}">Start Course</a>
+                <button class="btn outline" onclick="enrollCourseAction('${course.id}')">Enroll</button>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      };
+
+      render(courses);
+
+      // Search functionality
+      document.getElementById('catalog-search').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = courses.filter(course =>
+          course.title.toLowerCase().includes(query) ||
+          course.instructor.toLowerCase().includes(query) ||
+          (course.description && course.description.toLowerCase().includes(query))
+        );
+        render(filtered);
+      });
+
+      // Category filter
+      filter.addEventListener('change', () => {
+        const category = filter.value;
+        const level = document.getElementById('level-filter').value;
+        let filtered = courses;
+
+        if (category) {
+          filtered = filtered.filter(c => c.category === category);
+        }
+        if (level) {
+          filtered = filtered.filter(c => c.level === level);
+        }
+
+        render(filtered);
+      });
+
+      // Level filter
+      document.getElementById('level-filter').addEventListener('change', () => {
+        const category = filter.value;
+        const level = document.getElementById('level-filter').value;
+        let filtered = courses;
+
+        if (category) {
+          filtered = filtered.filter(c => c.category === category);
+        }
+        if (level) {
+          filtered = filtered.filter(c => c.level === level);
+        }
+
+        render(filtered);
+      });
+    }
+
+    function enrollCourseAction(courseId){
+      const session = Auth.currentSession();
+      if (!session) {
+        alert('Please login to enroll in courses');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const result = CourseManager.enrollCourse(session.userId, courseId);
+      if (!result.ok) {
+        alert(result.msg);
+        return;
+      }
+
+      alert('Successfully enrolled! Visit your dashboard to start learning.');
+      window.location.href = 'learner_dashboard.html';
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', pageCatalogInit);
+  </script>
+</body>
+</html>

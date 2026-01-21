@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sign Up — Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-register">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="forum.html">Forum</a></li>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="register.html" class="active">Sign Up</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card" style="max-width: 400px; margin: 60px auto;">
+      <div class="card-header">
+        <h1 class="card-title">Create Account</h1>
+        <p class="card-body">Join Learning Assure and start your learning journey</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); handleRegister(this)">
+        <div class="form-group">
+          <label class="form-label" for="name">Full Name</label>
+          <input id="name" name="name" class="input" type="text" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input id="email" name="email" class="input" type="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input id="password" name="password" class="input" type="password" placeholder="Create a password" required minlength="6">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="role">Account Type</label>
+          <select id="role" name="role" class="input select" required>
+            <option value="learner">Learner</option>
+            <option value="instructor">Instructor</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn primary" style="width: 100%;">Create Account</button>
+        </div>
+      </form>
+
+      <div class="text-center mt-3">
+        <p class="text-secondary">Already have an account? <a href="login.html" class="text-primary">Sign in here</a></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function handleRegister(form){
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const password = form.password.value;
+      const role = form.role.value;
+
+      if (!name || !email || !password || !role) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      if (password.length < 6) {
+        alert('Password must be at least 6 characters long');
+        return;
+      }
+
+      const result = Auth.register(name, email, password, role);
+      if (!result.ok) {
+        alert(result.msg);
+        return;
+      }
+
+      alert('Account created successfully! Welcome to Learning Assure.');
+
+      // Redirect to unified dashboard
+      window.location.href = 'dashboard.html';
+    }
+
+    // Auto-focus name field
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('name').focus();
+    });
+  </script>
+</body>
+</html>

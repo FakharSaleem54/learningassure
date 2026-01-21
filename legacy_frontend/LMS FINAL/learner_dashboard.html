@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Learner Dashboard - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="js/cert.js"></script>
+  <script src="ai_recommendation.js"></script>
+  <script src="linkedin_integration.js"></script>
+  <script src="main.js"></script>
+  <script src="js/learner.js" defer></script>
+</head>
+<body id="page-learner-dashboard">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="learner-dashboard.html" class="active">My Learning</a></li>
+            <li><a href="bundles.html">Bundles</a></li>
+            <li><a href="learning_paths.html">Paths</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="forum.html">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>My Learning Dashboard</h1>
+      <p>Track your progress, continue learning, and earn certificates</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="action-bar">
+      <button class="btn primary" onclick="LearnerDashboard.browseCourses()">
+        <span class="btn-icon">🔍</span>
+        Browse Courses
+      </button>
+      <button class="btn outline" onclick="viewAchievements()">
+        <span class="btn-icon">🏆</span>
+        Achievements
+      </button>
+      <button class="btn outline" onclick="manageProfile()">
+        <span class="btn-icon">⚙️</span>
+        Profile Settings
+      </button>
+    </div>
+
+    <!-- Learning Stats -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">📚</div>
+        <div class="kpi-content">
+          <h3 id="statEnrolled">0</h3>
+          <p>Courses Enrolled</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">✅</div>
+        <div class="kpi-content">
+          <h3 id="statCompleted">0</h3>
+          <p>Courses Completed</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🎓</div>
+        <div class="kpi-content">
+          <h3 id="statCertificates">0</h3>
+          <p>Certificates Earned</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📊</div>
+        <div class="kpi-content">
+          <h3 id="statSpent">$0</h3>
+          <p>Total Spent</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Learning -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2>Continue Learning</h2>
+        <div class="section-actions">
+          <select id="courseStatusFilter" class="select-input">
+            <option value="all">All Courses</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+      </div>
+      <div id="enrolledCourses" class="courses-grid">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- Learning Analytics -->
+    <section class="dashboard-section">
+      <h2>Learning Analytics</h2>
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>Study Time This Week</h3>
+          <div class="analytics-chart" id="weeklyStudyChart">
+            <!-- Chart will be populated by JavaScript -->
+            <div class="chart-placeholder">📊 Weekly Study Hours</div>
+          </div>
+        </div>
+        <div class="analytics-card">
+          <h3>Progress Overview</h3>
+          <div class="analytics-metrics">
+            <div class="metric-item">
+              <span class="metric-label">Average Progress</span>
+              <span class="metric-value" id="avgProgress">0%</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Courses in Progress</span>
+              <span class="metric-value" id="inProgressCourses">0</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-label">Completion Rate</span>
+              <span class="metric-value" id="completionRate">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Activity -->
+    <section class="dashboard-section">
+      <h2>Recent Activity</h2>
+      <div class="activity-feed" id="activityFeed">
+        <div class="activity-item">
+          <div class="activity-icon">📖</div>
+          <div class="activity-content">
+            <p>You completed lesson "Introduction to HTML" in <strong>Web Development Bootcamp</strong></p>
+            <span class="activity-time">2 hours ago</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">🎯</div>
+          <div class="activity-content">
+            <p>You scored 85% on the quiz for <strong>CSS Fundamentals</strong></p>
+            <span class="activity-time">1 day ago</span>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">🏆</div>
+          <div class="activity-content">
+            <p>You earned a certificate for completing <strong>UI/UX Design Essentials</strong></p>
+            <span class="activity-time">3 days ago</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Certificates Earned -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2>My Certificates</h2>
+        <a href="#" class="btn outline sm">View All</a>
+      </div>
+      <div id="certificatesList" class="certificates-grid">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <!-- AI-Powered Course Recommendations -->
+    <section class="dashboard-section" id="recommendations-section">
+      <h2>Recommended for You</h2>
+      <p class="section-description">Personalized course suggestions based on your learning history and LinkedIn profile</p>
+      <div class="courses-grid" id="recommendations-container">
+        <!-- AI recommendations will be loaded here by JavaScript -->
+        <div class="loading">Loading recommendations...</div>
+      </div>
+    </section>
+
+    <!-- Debug Panel -->
+    <section class="dashboard-section" id="debug-section" style="display: none;">
+      <div class="section-header">
+        <h2>Debug Information</h2>
+        <button class="btn outline sm" onclick="toggleDebugPanel()">Toggle Debug</button>
+      </div>
+      <div class="debug-panel">
+        <div class="debug-logs" id="debugLogs">
+          <div class="debug-item">🔄 Initializing learner dashboard...</div>
+        </div>
+        <div class="debug-actions">
+          <button class="btn outline sm" onclick="clearDebugLogs()">Clear Logs</button>
+          <button class="btn outline sm" onclick="exportDebugLogs()">Export Logs</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

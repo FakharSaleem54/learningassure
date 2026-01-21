@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="main.js"></script>
+  <script src="analytics.js"></script>
+  <script src="gamification.js"></script>
+  <script src="notifications.js"></script>
+  <script src="compliance_manager.js"></script>
+</head>
+<body id="page-dashboard">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="forum.html">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Learning Assure Dashboard</h1>
+      <p>Comprehensive overview of all platform activities and user roles</p>
+    </div>
+
+    <!-- Admin Dashboard Section -->
+    <div id="adminDashboard" class="dashboard-section">
+      <div class="section-header">
+        <h2>👑 Admin Dashboard</h2>
+        <p>Platform management and oversight</p>
+      </div>
+      <!-- Admin KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-content">
+            <h3 id="adminTotalUsers">0</h3>
+            <p>Total Users</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📚</div>
+          <div class="kpi-content">
+            <h3 id="adminTotalCourses">0</h3>
+            <p>Total Courses</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-content">
+            <h3 id="adminTotalEnrollments">0</h3>
+            <p>Total Enrollments</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-content">
+            <h3 id="adminTotalRevenue">$0</h3>
+            <p>Total Revenue</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Quick Actions -->
+      <div class="action-bar">
+        <button class="btn primary" onclick="showUserManagement()">
+          <span class="btn-icon">👥</span>
+          Manage Users
+        </button>
+        <button class="btn outline" onclick="showCourseManagement()">
+          <span class="btn-icon">📚</span>
+          Manage Courses
+        </button>
+        <button class="btn outline" onclick="showAnalytics()">
+          <span class="btn-icon">📊</span>
+          View Analytics
+        </button>
+        <button class="btn outline" onclick="generateComplianceReport()">
+          <span class="btn-icon">📋</span>
+          Compliance Report
+        </button>
+      </div>
+
+      <!-- Admin Recent Activity -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Recent Enrollments</h3>
+          <div id="adminRecentEnrollments" class="activity-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Pending Approvals</h3>
+          <div id="adminPendingApprovals" class="activity-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>System Health</h3>
+          <div class="system-status">
+            <div class="status-item">
+              <span class="status-label">Server Status:</span>
+              <span class="status-value online">Online</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Active Users:</span>
+              <span class="status-value" id="activeUsersCount">0</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Storage Used:</span>
+              <span class="status-value">45%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructor Dashboard Section -->
+    <div id="instructorDashboard" class="dashboard-section">
+      <div class="section-header">
+        <h2>👨‍🏫 Instructor Dashboard</h2>
+        <p>Course creation and student management</p>
+      </div>
+      <!-- Instructor KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">📚</div>
+          <div class="kpi-content">
+            <h3 id="instructorTotalCourses">0</h3>
+            <p>My Courses</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-content">
+            <h3 id="instructorTotalStudents">0</h3>
+            <p>Total Students</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">⭐</div>
+          <div class="kpi-content">
+            <h3 id="instructorAvgRating">0</h3>
+            <p>Average Rating</p>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-content">
+            <h3 id="instructorTotalEarnings">$0</h3>
+            <p>Total Earnings</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructor Quick Actions -->
+      <div class="action-bar">
+        <button class="btn primary" onclick="createNewCourse()">
+          <span class="btn-icon">➕</span>
+          Create Course
+        </button>
+        <button class="btn outline" onclick="manageExistingCourses()">
+          <span class="btn-icon">📝</span>
+          Manage Courses
+        </button>
+        <button class="btn outline" onclick="viewStudentProgress()">
+          <span class="btn-icon">📊</span>
+          Student Progress
+        </button>
+        <button class="btn outline" onclick="accessForum()">
+          <span class="btn-icon">💬</span>
+          Forum
+        </button>
+      </div>
+
+      <!-- Instructor Course Overview -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>My Courses</h3>
+          <div id="instructorCoursesList" class="course-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Recent Student Activity</h3>
+          <div id="instructorRecentActivity" class="activity-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Pending Tasks</h3>
+          <div id="instructorPendingTasks" class="task-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Learner Dashboard Section -->
+    <div id="learnerDashboard" class="dashboard-section">
+      <div class="section-header">
+        <h2>🎓 Learner Dashboard</h2>
+        <p>Personal learning progress and achievements</p>
+      </div>
+      <!-- Learner Progress Overview -->
+      <div class="progress-overview">
+        <div class="progress-card">
+          <h3>Learning Progress</h3>
+          <div class="progress-circle" id="overallProgress">
+            <span class="progress-text">0%</span>
+          </div>
+          <p>Overall Completion</p>
+        </div>
+        <div class="progress-stats">
+          <div class="stat-item">
+            <span class="stat-number" id="coursesEnrolled">0</span>
+            <span class="stat-label">Courses Enrolled</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="coursesCompleted">0</span>
+            <span class="stat-label">Courses Completed</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="certificatesEarned">0</span>
+            <span class="stat-label">Certificates Earned</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions for Learners -->
+      <div class="action-bar">
+        <button class="btn primary" onclick="browseCourses()">
+          <span class="btn-icon">🔍</span>
+          Browse Courses
+        </button>
+        <button class="btn outline" onclick="viewMyCertificates()">
+          <span class="btn-icon">🎓</span>
+          My Certificates
+        </button>
+        <button class="btn outline" onclick="viewAchievements()">
+          <span class="btn-icon">🏆</span>
+          Achievements
+        </button>
+        <button class="btn outline" onclick="joinForum()">
+          <span class="btn-icon">💬</span>
+          Community Forum
+        </button>
+      </div>
+
+      <!-- Learner Content -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Continue Learning</h3>
+          <div id="continueLearning" class="course-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Recommended for You</h3>
+          <div id="recommendedCourses" class="course-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Recent Achievements</h3>
+          <div id="recentAchievements" class="achievement-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Learning Streak & Gamification -->
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h3>Learning Streak</h3>
+          <div class="streak-display">
+            <div class="streak-number" id="currentStreak">0</div>
+            <p>days in a row</p>
+            <div class="streak-calendar" id="streakCalendar">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Points & Badges</h3>
+          <div class="gamification-stats">
+            <div class="points-display">
+              <span class="points-number" id="totalPoints">0</span>
+              <span class="points-label">Total Points</span>
+            </div>
+            <div class="badges-display" id="earnedBadges">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h3>Upcoming Deadlines</h3>
+          <div id="upcomingDeadlines" class="deadline-list">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Panel -->
+    <div id="notificationsPanel" class="notifications-panel" style="display: none;">
+      <h3>Notifications</h3>
+      <div id="notificationsList" class="notifications-list">
+        <!-- Will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Unified Dashboard Manager
+    const DashboardManager = {
+      currentUser: null,
+      userRole: null,
+
+      init() {
+        // First update auth UI
+        updateAuthUI();
+
+        // Check URL parameters for specific dashboard view
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewParam = urlParams.get('view');
+
+        this.currentUser = Auth.getCurrentUser();
+        if (!this.currentUser) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        // Use URL parameter if provided, otherwise use user role
+        this.userRole = viewParam || this.currentUser.role || 'learner';
+        this.setupDashboard();
+        this.loadDashboardData();
+        this.setupEventListeners();
+      },
+
+      setupDashboard() {
+        // Show all dashboard sections for unified view
+        document.getElementById('adminDashboard').style.display = 'block';
+        document.getElementById('instructorDashboard').style.display = 'block';
+        document.getElementById('learnerDashboard').style.display = 'block';
+
+        // Update titles to reflect unified dashboard - check if elements exist first
+        const titleEl = document.getElementById('dashboardTitle');
+        const subtitleEl = document.getElementById('dashboardSubtitle');
+        if (titleEl) titleEl.textContent = 'Learning Assure Unified Dashboard';
+        if (subtitleEl) subtitleEl.textContent = 'Complete overview of platform activities across all user roles';
+      },
+
+      loadDashboardData() {
+        // Load all dashboard data for unified view
+        this.loadAdminData();
+        this.loadInstructorData();
+        this.loadLearnerData();
+      },
+
+      loadAdminData() {
+        // Load admin statistics
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const courses = CourseManager.getAllCourses();
+        const enrollments = JSON.parse(localStorage.getItem('enrollments') || '[]');
+
+        document.getElementById('adminTotalUsers').textContent = users.length;
+        document.getElementById('adminTotalCourses').textContent = courses.length;
+        document.getElementById('adminTotalEnrollments').textContent = enrollments.length;
+
+        // Calculate revenue (simplified)
+        const revenue = enrollments.reduce((total, enrollment) => {
+          const course = courses.find(c => c.id === enrollment.courseId);
+          return total + (course ? course.price : 0);
+        }, 0);
+        document.getElementById('adminTotalRevenue').textContent = `$${revenue}`;
+
+        // Load recent enrollments
+        this.loadRecentEnrollments();
+        this.loadPendingApprovals();
+      },
+
+      loadInstructorData() {
+        const courses = CourseManager.getAllCourses().filter(course =>
+          course.instructorId === this.currentUser.id
+        );
+        const enrollments = JSON.parse(localStorage.getItem('enrollments') || '[]');
+
+        document.getElementById('instructorTotalCourses').textContent = courses.length;
+
+        // Calculate total students
+        const studentIds = new Set();
+        enrollments.forEach(enrollment => {
+          if (courses.some(course => course.id === enrollment.courseId)) {
+            studentIds.add(enrollment.userId);
+          }
+        });
+        document.getElementById('instructorTotalStudents').textContent = studentIds.size;
+
+        // Load instructor courses
+        this.loadInstructorCourses(courses);
+        this.loadInstructorActivity();
+      },
+
+      loadLearnerData() {
+        const enrollments = JSON.parse(localStorage.getItem('enrollments') || '[]')
+          .filter(e => e.userId === this.currentUser.id);
+        const certificates = JSON.parse(localStorage.getItem('certificates') || '[]')
+          .filter(c => c.recipientId === this.currentUser.id);
+
+        document.getElementById('coursesEnrolled').textContent = enrollments.length;
+        document.getElementById('certificatesEarned').textContent = certificates.length;
+
+        // Calculate completed courses
+        const completedCount = enrollments.filter(e => e.progressPercent === 100).length;
+        document.getElementById('coursesCompleted').textContent = completedCount;
+
+        // Calculate overall progress
+        const totalProgress = enrollments.reduce((sum, e) => sum + (e.progressPercent || 0), 0);
+        const avgProgress = enrollments.length > 0 ? Math.round(totalProgress / enrollments.length) : 0;
+        document.getElementById('overallProgress').querySelector('.progress-text').textContent = `${avgProgress}%`;
+
+        // Load learner content
+        this.loadContinueLearning(enrollments);
+        this.loadRecommendedCourses();
+        this.loadRecentAchievements();
+        this.loadGamificationData();
+      },
+
+      loadRecentEnrollments() {
+        const enrollments = JSON.parse(localStorage.getItem('enrollments') || '[]');
+        const recentEnrollments = enrollments
+          .sort((a, b) => new Date(b.enrolledAt) - new Date(a.enrolledAt))
+          .slice(0, 5);
+
+        const container = document.getElementById('adminRecentEnrollments');
+        container.innerHTML = recentEnrollments.map(enrollment => {
+          const user = JSON.parse(localStorage.getItem('users') || '[]')
+            .find(u => u.id === enrollment.userId);
+          const course = CourseManager.getCourseById(enrollment.courseId);
+
+          return `
+            <div class="activity-item">
+              <div class="activity-icon">📚</div>
+              <div class="activity-content">
+                <p><strong>${user?.name || 'Unknown User'}</strong> enrolled in <strong>${course?.title || 'Unknown Course'}</strong></p>
+                <small>${new Date(enrollment.enrolledAt).toLocaleDateString()}</small>
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+
+      loadPendingApprovals() {
+        // Mock pending approvals - in real implementation, this would check for pending course approvals, user registrations, etc.
+        const container = document.getElementById('adminPendingApprovals');
+        container.innerHTML = `
+          <div class="activity-item">
+            <div class="activity-icon">⏳</div>
+            <div class="activity-content">
+              <p><strong>5 course approvals</strong> pending review</p>
+              <small>Requires admin action</small>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">👤</div>
+            <div class="activity-content">
+              <p><strong>2 instructor applications</strong> awaiting approval</p>
+              <small>Requires admin action</small>
+            </div>
+          </div>
+        `;
+      },
+
+      loadInstructorCourses(courses) {
+        const container = document.getElementById('instructorCoursesList');
+        container.innerHTML = courses.map(course => {
+          const enrollments = JSON.parse(localStorage.getItem('enrollments') || '[]')
+            .filter(e => e.courseId === course.id);
+
+          return `
+            <div class="course-item">
+              <div class="course-thumb">
+                <img src="${course.thumbnail}" alt="${course.title}">
+              </div>
+              <div class="course-info">
+                <h4>${course.title}</h4>
+                <p>${enrollments.length} students enrolled</p>
+                <div class="course-actions">
+                  <button onclick="editCourse('${course.id}')" class="btn small">Edit</button>
+                  <button onclick="viewStudents('${course.id}')" class="btn small outline">Students</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+
+      loadInstructorActivity() {
+        // Mock recent activity
+        const container = document.getElementById('instructorRecentActivity');
+        container.innerHTML = `
+          <div class="activity-item">
+            <div class="activity-icon">📝</div>
+            <div class="activity-content">
+              <p><strong>John Doe</strong> submitted assignment for "Advanced JavaScript"</p>
+              <small>2 hours ago</small>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">💬</div>
+            <div class="activity-content">
+              <p>New discussion in <strong>Python Basics</strong> forum</p>
+              <small>4 hours ago</small>
+            </div>
+          </div>
+        `;
+      },
+
+      loadContinueLearning(enrollments) {
+        const inProgressEnrollments = enrollments.filter(e => e.progressPercent < 100);
+        const container = document.getElementById('continueLearning');
+
+        if (inProgressEnrollments.length === 0) {
+          container.innerHTML = '<p>No courses in progress. <a href="catalog.html">Browse courses</a> to get started!</p>';
+          return;
+        }
+
+        container.innerHTML = inProgressEnrollments.slice(0, 3).map(enrollment => {
+          const course = CourseManager.getCourseById(enrollment.courseId);
+          if (!course) return '';
+
+          return `
+            <div class="course-item">
+              <div class="course-thumb">
+                <img src="${course.thumbnail}" alt="${course.title}">
+              </div>
+              <div class="course-info">
+                <h4>${course.title}</h4>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${enrollment.progressPercent}%"></div>
+                </div>
+                <p>${enrollment.progressPercent}% complete</p>
+                <a href="player.html?course=${course.id}" class="btn small">Continue</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+
+      loadRecommendedCourses() {
+        // Use AI recommendations if available
+        if (window.AIRecommendationEngine) {
+          const recommendations = window.AIRecommendationEngine.getRecommendations(this.currentUser.id);
+          const container = document.getElementById('recommendedCourses');
+
+          if (recommendations.length === 0) {
+            container.innerHTML = '<p>No recommendations available yet. Complete some courses to get personalized suggestions!</p>';
+            return;
+          }
+
+          container.innerHTML = recommendations.slice(0, 3).map(course => `
+            <div class="course-item">
+              <div class="course-thumb">
+                <img src="${course.thumbnail}" alt="${course.title}">
+              </div>
+              <div class="course-info">
+                <h4>${course.title}</h4>
+                <p>${course.description.substring(0, 100)}...</p>
+                <a href="player.html?course=${course.id}" class="btn small">Enroll</a>
+              </div>
+            </div>
+          `).join('');
+        }
+      },
+
+      loadRecentAchievements() {
+        // Mock achievements - in real implementation, this would come from gamification system
+        const container = document.getElementById('recentAchievements');
+        container.innerHTML = `
+          <div class="achievement-item">
+            <div class="achievement-icon">🏆</div>
+            <div class="achievement-content">
+              <h4>Course Completed</h4>
+              <p>Completed "Introduction to Web Development"</p>
+              <small>2 days ago</small>
+            </div>
+          </div>
+          <div class="achievement-item">
+            <div class="achievement-icon">⭐</div>
+            <div class="achievement-content">
+              <h4>Perfect Quiz Score</h4>
+              <p>Scored 100% on JavaScript Fundamentals quiz</p>
+              <small>1 week ago</small>
+            </div>
+          </div>
+        `;
+      },
+
+      loadGamificationData() {
+        // Load gamification data if available
+        if (window.GamificationManager) {
+          const points = window.GamificationManager.getUserPoints(this.currentUser.id);
+          const badges = window.GamificationManager.getUserBadges(this.currentUser.id);
+
+          document.getElementById('totalPoints').textContent = points;
+          document.getElementById('currentStreak').textContent = '7'; // Mock streak
+
+          const badgesContainer = document.getElementById('earnedBadges');
+          badgesContainer.innerHTML = badges.map(badge => `
+            <div class="badge-item">
+              <span class="badge-icon">${badge.icon}</span>
+              <span class="badge-name">${badge.name}</span>
+            </div>
+          `).join('');
+        }
+      },
+
+      setupEventListeners() {
+        // Add any dashboard-specific event listeners here
+      }
+    };
+
+    // Navigation functions - Updated to use unified dashboard
+    function showUserManagement() {
+      window.location.href = 'dashboard.html?view=admin';
+    }
+
+    function showCourseManagement() {
+      window.location.href = 'dashboard.html?view=admin';
+    }
+
+    function showAnalytics() {
+      window.location.href = 'analytics.html';
+    }
+
+    function generateComplianceReport() {
+      if (window.ComplianceManager) {
+        const report = window.ComplianceManager.generateComplianceReport();
+        console.log('Compliance Report:', report);
+        alert('Compliance report generated. Check console for details.');
+      }
+    }
+
+    function createNewCourse() {
+      window.location.href = 'course_builder.html';
+    }
+
+    function manageExistingCourses() {
+      window.location.href = 'dashboard.html?view=instructor';
+    }
+
+    function viewStudentProgress() {
+      window.location.href = 'dashboard.html?view=instructor';
+    }
+
+    function accessForum() {
+      window.location.href = 'forum.html';
+    }
+
+    function browseCourses() {
+      window.location.href = 'catalog.html';
+    }
+
+    function viewMyCertificates() {
+      window.location.href = 'certificate.html';
+    }
+
+    function viewAchievements() {
+      // Could open a modal or redirect to achievements page
+      alert('Achievements feature coming soon!');
+    }
+
+    function joinForum() {
+      window.location.href = 'forum.html';
+    }
+
+    function editCourse(courseId) {
+      window.location.href = `course_builder.html?id=${courseId}`;
+    }
+
+    function viewStudents(courseId) {
+      window.location.href = `dashboard.html?view=instructor&course=${courseId}`;
+    }
+
+    // Initialize dashboard when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      DashboardManager.init();
+    });
+  </script>
+</body>
+</html>

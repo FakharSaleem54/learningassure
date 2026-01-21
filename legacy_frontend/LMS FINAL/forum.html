@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Community Forum - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body id="page-forum">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="forum.html" class="active">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Community Forum</h1>
+      <p>Connect with fellow learners, share knowledge, and get help</p>
+    </div>
+
+    <!-- Forum Stats -->
+    <div class="forum-stats">
+      <div class="stat-card">
+        <div class="stat-icon">💬</div>
+        <div class="stat-content">
+          <h3 id="totalTopics">0</h3>
+          <p>Discussion Topics</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-content">
+          <h3 id="totalMembers">0</h3>
+          <p>Active Members</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-content">
+          <h3 id="totalPosts">0</h3>
+          <p>Total Posts</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-content">
+          <h3 id="onlineNow">0</h3>
+          <p>Online Now</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Forum Actions -->
+    <div class="forum-actions">
+      <button class="btn primary" onclick="ForumManager.createNewTopic()">
+        <span class="btn-icon">➕</span>
+        Start New Discussion
+      </button>
+      <div class="forum-filters">
+        <select id="categoryFilter" class="select-input">
+          <option value="all">All Categories</option>
+          <option value="general">General Discussion</option>
+          <option value="courses">Course Help</option>
+          <option value="technical">Technical Support</option>
+          <option value="career">Career Advice</option>
+        </select>
+        <select id="sortFilter" class="select-input">
+          <option value="recent">Most Recent</option>
+          <option value="popular">Most Popular</option>
+          <option value="unanswered">Unanswered</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Forum Categories -->
+    <div class="forum-categories">
+      <div class="category-card" data-category="general">
+        <div class="category-icon">💬</div>
+        <div class="category-content">
+          <h3>General Discussion</h3>
+          <p>General topics and community conversations</p>
+          <div class="category-stats">
+            <span>245 topics</span> • <span>1,234 posts</span>
+          </div>
+        </div>
+      </div>
+      <div class="category-card" data-category="courses">
+        <div class="category-icon">📚</div>
+        <div class="category-content">
+          <h3>Course Help</h3>
+          <p>Get help with course content and assignments</p>
+          <div class="category-stats">
+            <span>189 topics</span> • <span>892 posts</span>
+          </div>
+        </div>
+      </div>
+      <div class="category-card" data-category="technical">
+        <div class="category-icon">🔧</div>
+        <div class="category-content">
+          <h3>Technical Support</h3>
+          <p>Platform issues and technical questions</p>
+          <div class="category-stats">
+            <span>67 topics</span> • <span>234 posts</span>
+          </div>
+        </div>
+      </div>
+      <div class="category-card" data-category="career">
+        <div class="category-icon">💼</div>
+        <div class="category-content">
+          <h3>Career Advice</h3>
+          <p>Career guidance and professional development</p>
+          <div class="category-stats">
+            <span>98 topics</span> • <span>456 posts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topics List -->
+    <div class="forum-topics">
+      <div class="topics-header">
+        <h2>Recent Discussions</h2>
+      </div>
+      <div id="topicsList" class="topics-list">
+        <!-- Topics will be populated by JavaScript -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="noTopics" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">💬</div>
+        <h3>No discussions yet</h3>
+        <p>Be the first to start a conversation!</p>
+        <button class="btn primary" onclick="ForumManager.createNewTopic()">Start Discussion</button>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="forumPagination" style="display: none;">
+      <button class="page-btn" data-page="prev">Previous</button>
+      <span class="page-numbers">
+        <button class="page-btn active" data-page="1">1</button>
+        <button class="page-btn" data-page="2">2</button>
+        <button class="page-btn" data-page="3">3</button>
+      </span>
+      <button class="page-btn" data-page="next">Next</button>
+    </div>
+  </div>
+
+  <!-- New Topic Modal -->
+  <div id="newTopicModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Start New Discussion</h3>
+        <button class="modal-close" onclick="ForumManager.closeNewTopicModal()">&times;</button>
+      </div>
+      <form id="newTopicForm" onsubmit="event.preventDefault(); ForumManager.submitNewTopic(this)">
+        <div class="form-group">
+          <label for="topicTitle">Topic Title *</label>
+          <input type="text" id="topicTitle" name="title" class="input" required placeholder="What's your question or topic?">
+        </div>
+
+        <div class="form-group">
+          <label for="topicCategory">Category</label>
+          <select id="topicCategory" name="category" class="input">
+            <option value="general">General Discussion</option>
+            <option value="courses">Course Help</option>
+            <option value="technical">Technical Support</option>
+            <option value="career">Career Advice</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="topicContent">Description *</label>
+          <textarea id="topicContent" name="content" class="input" rows="6" required placeholder="Provide details about your topic..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn outline" onclick="ForumManager.closeNewTopicModal()">Cancel</button>
+          <button type="submit" class="btn primary">Post Discussion</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Forum functionality
+    const ForumManager = {
+      currentPage: 1,
+      currentCategory: 'all',
+      currentSort: 'recent',
+
+      initializeForum() {
+        const session = Auth.requireLogin('login.html');
+        if (!session) return;
+
+        this.loadForumStats();
+        this.loadTopics();
+        this.setupEventListeners();
+      },
+
+      loadForumStats() {
+        // Mock data - in real implementation, this would come from API
+        document.getElementById('totalTopics').textContent = '599';
+        document.getElementById('totalMembers').textContent = '2,847';
+        document.getElementById('totalPosts').textContent = '12,345';
+        document.getElementById('onlineNow').textContent = '127';
+      },
+
+      loadTopics() {
+        const topicsContainer = document.getElementById('topicsList');
+        const noTopics = document.getElementById('noTopics');
+
+        // Mock topics data
+        const mockTopics = [
+          {
+            id: 1,
+            title: "Best practices for React component design?",
+            author: "Sarah Johnson",
+            category: "courses",
+            replies: 23,
+            views: 456,
+            lastActivity: "2 hours ago",
+            isAnswered: true
+          },
+          {
+            id: 2,
+            title: "Having trouble with CSS Grid layout",
+            author: "Mike Chen",
+            category: "technical",
+            replies: 8,
+            views: 123,
+            lastActivity: "5 hours ago",
+            isAnswered: false
+          },
+          {
+            id: 3,
+            title: "Career transition into tech - where to start?",
+            author: "Emma Davis",
+            category: "career",
+            replies: 45,
+            views: 892,
+            lastActivity: "1 day ago",
+            isAnswered: true
+          }
+        ];
+
+        if (mockTopics.length === 0) {
+          topicsContainer.style.display = 'none';
+          noTopics.style.display = 'block';
+          return;
+        }
+
+        topicsContainer.style.display = 'block';
+        noTopics.style.display = 'none';
+
+        topicsContainer.innerHTML = mockTopics.map(topic => `
+          <div class="topic-card" data-topic-id="${topic.id}">
+            <div class="topic-content">
+              <h3 class="topic-title">
+                ${topic.isAnswered ? '<span class="answered-badge">✓</span>' : ''}
+                ${topic.title}
+              </h3>
+              <div class="topic-meta">
+                <span class="topic-author">by ${topic.author}</span>
+                <span class="topic-category">${this.getCategoryName(topic.category)}</span>
+                <span class="topic-activity">${topic.lastActivity}</span>
+              </div>
+            </div>
+            <div class="topic-stats">
+              <div class="stat-item">
+                <span class="stat-number">${topic.replies}</span>
+                <span class="stat-label">replies</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">${topic.views}</span>
+                <span class="stat-label">views</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Add click listeners
+        document.querySelectorAll('.topic-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const topicId = card.dataset.topicId;
+            this.viewTopic(topicId);
+          });
+        });
+      },
+
+      getCategoryName(category) {
+        const names = {
+          general: 'General',
+          courses: 'Course Help',
+          technical: 'Technical',
+          career: 'Career'
+        };
+        return names[category] || category;
+      },
+
+      setupEventListeners() {
+        // Category filter
+        document.getElementById('categoryFilter').addEventListener('change', (e) => {
+          this.currentCategory = e.target.value;
+          this.loadTopics();
+        });
+
+        // Sort filter
+        document.getElementById('sortFilter').addEventListener('change', (e) => {
+          this.currentSort = e.target.value;
+          this.loadTopics();
+        });
+      },
+
+      createNewTopic() {
+        document.getElementById('newTopicModal').style.display = 'flex';
+      },
+
+      closeNewTopicModal() {
+        document.getElementById('newTopicModal').style.display = 'none';
+        document.getElementById('newTopicForm').reset();
+      },
+
+      submitNewTopic(form) {
+        const formData = new FormData(form);
+        const topicData = {
+          title: formData.get('title'),
+          category: formData.get('category'),
+          content: formData.get('content'),
+          author: Auth.currentSession().name,
+          timestamp: new Date().toISOString()
+        };
+
+        // In real implementation, send to API
+        console.log('Creating topic:', topicData);
+
+        this.closeNewTopicModal();
+        this.loadTopics(); // Refresh topics list
+
+        AppUtils.showSuccess('Discussion topic created successfully!');
+      },
+
+      viewTopic(topicId) {
+        // In real implementation, navigate to topic page
+        console.log('Viewing topic:', topicId);
+        AppUtils.showInfo('Topic view functionality coming soon!');
+      }
+    };
+
+    // Initialize forum when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      ForumManager.initializeForum();
+    });
+  </script>
+</body>
+</html>

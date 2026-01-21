@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard - Learning Assure</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/courses.js"></script>
+  <script src="compliance_manager.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/admin.js" defer></script>
+</head>
+<body id="page-admin-dashboard">
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <img src="assets/images/logo.png" alt="Learning Assure">
+        </div>
+        <nav class="navbar">
+          <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="admin-dashboard.html" class="active">Admin</a></li>
+            <li><a href="analytics.html">Analytics</a></li>
+            <li><a href="catalog.html">Courses</a></li>
+            <li><a href="forum.html">Forum</a></li>
+          </ul>
+        </nav>
+        <div class="user-menu">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Admin Dashboard</h1>
+      <p>Manage users, courses, and platform analytics</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-content">
+          <h3 id="totalUsers">0</h3>
+          <p>Total Users</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📚</div>
+        <div class="kpi-content">
+          <h3 id="totalCourses">0</h3>
+          <p>Total Courses</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📈</div>
+        <div class="kpi-content">
+          <h3 id="totalEnrollments">0</h3>
+          <p>Total Enrollments</p>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">💰</div>
+        <div class="kpi-content">
+          <h3 id="totalRevenue">$0</h3>
+          <p>Total Revenue</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Section -->
+    <section class="dashboard-section">
+      <h2>Analytics Overview</h2>
+      <div class="analytics-grid">
+        <div class="chart-container">
+          <h3>Monthly Revenue</h3>
+          <div id="revenueChart"></div>
+        </div>
+        <div class="stats-container">
+          <div class="stat-item">
+            <h4>Average Course Rating</h4>
+            <span class="stat-value" id="avgRating">4.7/5</span>
+          </div>
+          <div class="stat-item">
+            <h4>Completion Rate</h4>
+            <span class="stat-value" id="completionRate">78%</span>
+          </div>
+          <div class="stat-item">
+            <h4>Active Users (30 days)</h4>
+            <span class="stat-value" id="activeUsers">1,245</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Users Management -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2>User Management</h2>
+        <button class="btn primary" onclick="addNewUser()">Add New User</button>
+      </div>
+      <div class="table-container">
+        <table class="data-table" id="usersList">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Courses Management -->
+    <section class="dashboard-section">
+      <div class="section-header">
+        <h2>Course Management</h2>
+        <button class="btn primary" onclick="AdminDashboard.addNewCourse()">Add New Course</button>
+      </div>
+      <div class="table-container">
+        <table class="data-table" id="coursesList">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Instructor</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Enrollments</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Will be populated by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- System Settings -->
+    <section class="dashboard-section">
+      <h2>System Settings</h2>
+      <div class="settings-grid">
+        <div class="setting-card">
+          <h3>Platform Configuration</h3>
+          <div class="setting-item">
+            <label>Maintenance Mode</label>
+            <input type="checkbox" id="maintenanceMode">
+          </div>
+          <div class="setting-item">
+            <label>Registration Open</label>
+            <input type="checkbox" id="registrationOpen" checked>
+          </div>
+        </div>
+        <div class="setting-card">
+          <h3>Data Management</h3>
+          <button class="btn outline" onclick="exportData()">Export All Data</button>
+          <button class="btn outline" onclick="backupData()">Create Backup</button>
+          <button class="btn outline" onclick="ComplianceManager.generateComplianceReport()">Compliance Report</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>Learning Assure</h4>
+          <p>Empowering educators to share knowledge worldwide.</p>
+          <div class="social-links">
+            <a href="#" class="social-link">📘 Facebook</a>
+            <a href="#" class="social-link">🐦 Twitter</a>
+            <a href="#" class="social-link">📷 Instagram</a>
+            <a href="#" class="social-link">💼 LinkedIn</a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="catalog.html">Browse Courses</a></li>
+            <li><a href="bundles.html">Course Bundles</a></li>
+            <li><a href="learning_paths.html">Learning Paths</a></li>
+            <li><a href="instructor-dashboard.html">Become an Instructor</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="forum.html">Discussion Forum</a></li>
+            <li><a href="#">Student Community</a></li>
+            <li><a href="#">Instructor Hub</a></li>
+            <li><a href="#">Events & Webinars</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">System Status</a></li>
+            <li><a href="#">Feedback</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <p>&copy; 2025 Learning Assure. All rights reserved.</p>
+          <div class="footer-nav">
+            <a href="#">About</a>
+            <a href="#">Careers</a>
+            <a href="#">Press</a>
+            <a href="#">Investors</a>
+            <a href="#">Blog</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

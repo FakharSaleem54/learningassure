@@ -78,7 +78,7 @@ export default async function CoursesPage({
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                    {course.price === 0 ? 'Free' : `$${course.price}`}
+                                    {Number(course.price) === 0 ? 'Free' : `$${course.price}`}
                                 </td>
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${course.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :

@@ -1,14 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 
-let prisma: PrismaClient;
+// Disable prepared statements globally
+const clientOptions = {
+    // @ts-ignore - this is an internal private option
+    __internal: { usePreparedStatements: false }
+} as any;
 
 if (process.env.NODE_ENV === 'production') {
-    // In production, just create one instance
-    prisma = new PrismaClient();
+    prisma = new PrismaClient(clientOptions);
 } else {
-    // In development, avoid multiple instances due to hot reloads
     if (!(global as any).prisma) {
-        (global as any).prisma = new PrismaClient();
+        (global as any).prisma = new PrismaClient(clientOptions);
     }
     prisma = (global as any).prisma;
 }

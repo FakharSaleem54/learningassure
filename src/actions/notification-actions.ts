@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/session'
 
 export async function createNotification(userId: string, message: string, type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR' = 'INFO', link?: string) {

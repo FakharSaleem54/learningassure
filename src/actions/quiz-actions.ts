@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { getSession } from "@/lib/session"
 import { generateQuizQuestions } from "@/lib/ai/ai-service"
 import { revalidatePath } from "next/cache"

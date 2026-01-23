@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { join } from 'path'
 import fs from 'fs/promises'
 import { exec } from 'child_process'

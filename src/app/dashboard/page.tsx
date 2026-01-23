@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import InstructorMeetingDashboard from '@/components/InstructorMeetingDashboard'
 import StudentMeetingDashboard from '@/components/StudentMeetingDashboard'

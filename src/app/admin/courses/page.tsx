@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import CourseActions from "@/components/admin/CourseActions";
 import { Search, Filter, BookOpen } from "lucide-react";
 

@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import PublicProfileForms from "@/components/PublicProfileForms";

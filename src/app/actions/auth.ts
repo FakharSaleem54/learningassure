@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { hash, compare } from 'bcryptjs'
 import { createSession, deleteSession } from '@/lib/session'
 import { redirect } from 'next/navigation'

@@ -2,7 +2,7 @@ import EditCourseForm from '@/components/EditCourseForm'
 import LessonManager from '@/components/LessonManager'
 import Link from 'next/link'
 
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { getSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { addModule, deleteModule, publishCourse } from '@/app/actions/course'

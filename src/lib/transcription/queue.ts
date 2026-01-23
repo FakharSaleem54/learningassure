@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { processJob } from './transcription-service'
 
 export async function enqueueTranscription(lessonId: string) {

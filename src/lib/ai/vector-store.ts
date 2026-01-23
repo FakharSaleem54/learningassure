@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { generateEmbedding } from './embeddings';
 
 // Calculate cosine similarity between two vectors

@@ -1,7 +1,7 @@
 'use server';
 
 import { indexLecture } from '@/lib/ai/indexer';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function indexLectureAction(courseId: string, lectureId: string) {
     try {

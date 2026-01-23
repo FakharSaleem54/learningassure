@@ -2,7 +2,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export default async function AdminLayout({
     children,

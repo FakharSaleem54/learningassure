@@ -1,0 +1,9 @@
+Loaded keys: DIRECT_URL
+Testing DIRECT_URL -> Host: 'db.tbjnroriggjjguaumnvg.supabase.co', Port: 5432...
+DIRECT_URL: Error - getaddrinfo ENOTFOUND db.tbjnroriggjjguaumnvg.supabase.co
+Loaded keys: DIRECT_URL
+Testing DIRECT_URL -> Host: 'db.tbjnroriggjjguaumnvg.supabase.co', Port: 5432...
+DIRECT_URL: Connected successfully!
+Loaded keys: DIRECT_URL
+Testing DIRECT_URL -> Host: 'db.tbjnroriggjjguaumnvg.supabase.co', Port: 5432...
+DIRECT_URL: Connected successfully!

@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
 

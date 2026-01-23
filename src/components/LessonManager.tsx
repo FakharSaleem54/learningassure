@@ -9,6 +9,15 @@ import { Trash2, FileText, Upload, Plus, X, Video, Link as LinkIcon, Edit2 } fro
 export default function LessonManager({ module }: { module: any }) {
     const [editingLessonId, setEditingLessonId] = useState<string | null>(null)
 
+    const handleDeleteResource = async (resourceId: string) => {
+        const { deleteResource } = await import('@/app/actions/resource')
+        await deleteResource(resourceId)
+    }
+
+    const handleDeleteLesson = async (lessonId: string) => {
+        await deleteLesson(lessonId)
+    }
+
     return (
         <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
             <h3 className="text-lg font-bold mb-4 border-b border-border pb-2 flex items-center gap-2">
@@ -48,14 +57,13 @@ export default function LessonManager({ module }: { module: any }) {
                                         </>
                                     )}
                                 </button>
-                                <form action={async () => await deleteLesson(lesson.id)}>
-                                    <button
-                                        className="btn btn-ghost btn-sm text-destructive hover:bg-destructive/10 p-2 h-auto rounded-md transition-colors"
-                                        title="Delete Lesson"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </form>
+                                <button
+                                    onClick={() => handleDeleteLesson(lesson.id)}
+                                    className="btn btn-ghost btn-sm text-destructive hover:bg-destructive/10 p-2 h-auto rounded-md transition-colors"
+                                    title="Delete Lesson"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
                         </div>
 
@@ -125,7 +133,14 @@ export default function LessonManager({ module }: { module: any }) {
                                         </div>
                                     )}
 
-
+                                    <div className="text-right mt-6 border-t border-border pt-4">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-primary btn-sm px-4"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </div>
                                 </form>
 
                                 {/* Resources Section */}
@@ -146,17 +161,13 @@ export default function LessonManager({ module }: { module: any }) {
                                                         </div>
                                                         <span className="text-sm font-medium truncate text-foreground">{resource.title || resource.fileName}</span>
                                                     </div>
-                                                    <form action={async () => {
-                                                        const { deleteResource } = await import('@/app/actions/resource')
-                                                        await deleteResource(resource.id)
-                                                    }}>
-                                                        <button
-                                                            className="btn btn-ghost btn-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0 rounded-full transition-colors opacity-0 group-hover:opacity-100"
-                                                            title="Remove Resource"
-                                                        >
-                                                            <X size={14} />
-                                                        </button>
-                                                    </form>
+                                                    <button
+                                                        onClick={() => handleDeleteResource(resource.id)}
+                                                        className="btn btn-ghost btn-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 w-8 p-0 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                                                        title="Remove Resource"
+                                                    >
+                                                        <X size={14} />
+                                                    </button>
                                                 </div>
                                             ))}
                                         </div>
@@ -192,16 +203,6 @@ export default function LessonManager({ module }: { module: any }) {
                                             Upload PDF
                                         </button>
                                     </form>
-                                </div>
-
-                                <div className="text-right mt-6 border-t border-border pt-4">
-                                    <button
-                                        type="submit"
-                                        form={`update-lesson-form-${lesson.id}`}
-                                        className="btn btn-primary btn-sm px-4"
-                                    >
-                                        Save Changes
-                                    </button>
                                 </div>
                             </div>
                         )}

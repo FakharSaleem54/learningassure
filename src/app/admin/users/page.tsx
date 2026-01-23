@@ -1,4 +1,4 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import UserActions from "@/components/admin/UserActions";
 import AddUserButton from "@/components/admin/AddUserButton";
 import Link from "next/link";

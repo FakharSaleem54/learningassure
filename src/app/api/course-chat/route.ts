@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { findRelevantChunks } from '@/lib/ai/vector-store';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { generateAIResponse, generateStreamingAIResponse, classifyIntent } from '@/lib/ai/ai-service';
 import { AIContextBuilder } from '@/lib/ai/context-builder';
 

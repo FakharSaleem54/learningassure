@@ -116,19 +116,20 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
     // Serialize for Client Components
     // Filter out lessons that aren't ready for students (instructors can see all)
     const isInstructor = session?.userId === course.instructor.id
+    const { getSignedVideoUrl } = await import('@/lib/video-utils')
 
-    const serializedCourse = {
-        ...course,
-        price: Number(course.price),
-        createdAt: course.createdAt.toISOString(),
-        updatedAt: course.updatedAt.toISOString(),
-        modules: course.modules.map(mod => ({
-            ...mod,
-            lessons: mod.lessons
-                // Only show lessons where isReady=true for students, instructors see all
-                .filter((lesson: any) => isInstructor || lesson.isReady !== false)
-                .map((lesson: any) => ({
+    const modulesWithSignedUrls = await Promise.all(course.modules.map(async (mod) => ({
+        ...mod,
+        lessons: await Promise.all(mod.lessons
+            // Only show lessons where isReady=true for students, instructors see all
+            .filter((lesson: any) => isInstructor || lesson.isReady !== false)
+            .map(async (lesson: any) => {
+                // If videoUrl is a Supabase path (doesn't start with http), sign it
+                const signedUrl = lesson.videoUrl ? await getSignedVideoUrl(lesson.videoUrl) : null;
+
+                return {
                     ...lesson,
+                    videoUrl: signedUrl,
                     resources: lesson.resources.map((res: any) => ({
                         ...res,
                         createdAt: res.createdAt.toISOString()
@@ -140,8 +141,16 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
                     } : null,
                     attempts: lesson.quiz?.attempts || [],
                     isCompleted: lesson.progress?.[0]?.completed || false
-                }))
-        }))
+                };
+            }))
+    })));
+
+    const serializedCourse = {
+        ...course,
+        price: Number(course.price),
+        createdAt: course.createdAt.toISOString(),
+        updatedAt: course.updatedAt.toISOString(),
+        modules: modulesWithSignedUrls
     }
 
     return (

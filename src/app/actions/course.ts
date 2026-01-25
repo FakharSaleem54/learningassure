@@ -158,31 +158,28 @@ export async function updateLesson(lessonId: string, formData: FormData) {
     if (!session || session.role !== 'INSTRUCTOR') throw new Error('Unauthorized')
 
     const content = formData.get('content') as string
+    const description = formData.get('description') as string
     let videoUrl = formData.get('videoUrl') as string
+    const videoPath = formData.get('videoPath') as string
 
-    // File Upload Handling
-    const videoFile = formData.get('videoFile') as File
-    let isNewVideoUpload = false
-    if (videoFile && videoFile.size > 0) {
-        const { saveFile } = await import('@/lib/upload')
-
-        if (!videoFile.type.startsWith('video/')) {
-            throw new Error('Invalid file type. Please upload a video.')
-        }
-        if (videoFile.size > 2048 * 1024 * 1024) throw new Error('File too large (Max 2GB).')
-
-        const uploadedPath = await saveFile(videoFile, 'videos')
-        if (uploadedPath) videoUrl = uploadedPath
-        isNewVideoUpload = true
+    // If a direct path from Supabase upload is provided, use that
+    if (videoPath) {
+        videoUrl = videoPath
     }
+
+    // We no longer handle file uploads here directly for videos
+    // The client handles it via Supabase Storage
 
     await prisma.lesson.update({
         where: { id: lessonId },
         data: {
             content,
+            description,
             videoUrl,
-            // Set isReady=false when new video uploaded (will be set true after transcription)
-            ...(isNewVideoUpload && { isReady: false })
+            // Set isReady=false only if we think processing is needed, 
+            // but for now we trust the direct upload. 
+            // In future, we might set isReady=false to trigger transcription.
+            ...(videoPath && { isReady: false })
         }
     })
 
@@ -192,8 +189,8 @@ export async function updateLesson(lessonId: string, formData: FormData) {
     })
 
     if (lesson) {
-        // Trigger transcription if a new video was uploaded
-        if (videoFile && videoFile.size > 0) {
+        // Trigger transcription if a new video path was provided
+        if (videoPath) {
             try {
                 const { enqueueTranscription } = await import('@/lib/transcription/queue')
                 await enqueueTranscription(lessonId)

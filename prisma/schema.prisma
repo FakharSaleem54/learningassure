@@ -3,60 +3,53 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-// ============ USER & AUTH ============
-
 model User {
-  id        String   @id @default(uuid()) @db.Uuid
-  email     String   @unique @db.VarChar(255)
-  name      String?  @db.VarChar(255)
-  password  String   @db.VarChar(255)
-  role      String   @default("LEARNER") @db.VarChar(20)
-  status    String   @default("ACTIVE") @db.VarChar(20)
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
-
-  courses      Course[]      @relation("InstructorCourses")
-  enrollments  Enrollment[]
-  certificates Certificate[]
-  threads      ForumThread[] @relation("UserThreads")
-  replies      ForumReply[]  @relation("UserReplies")
-  threadVotes  ThreadVote[]  @relation("UserThreadVotes")
-  replyVotes   ReplyVote[]   @relation("UserReplyVotes")
-
-  studentMeetingRequests    LiveMeetingRequest[] @relation("StudentMeetings")
-  instructorMeetingRequests LiveMeetingRequest[] @relation("InstructorMeetings")
-  notifications             Notification[]
+  id                        String               @id @default(uuid()) @db.Uuid
+  email                     String               @unique @db.VarChar(255)
+  name                      String?              @db.VarChar(255)
+  password                  String               @db.VarChar(255)
+  role                      String               @default("LEARNER") @db.VarChar(20)
+  status                    String               @default("ACTIVE") @db.VarChar(20)
+  createdAt                 DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt                 DateTime             @updatedAt @db.Timestamptz(6)
+  certificates              Certificate[]
+  courses                   Course[]             @relation("InstructorCourses")
+  enrollments               Enrollment[]
+  replies                   ForumReply[]         @relation("UserReplies")
+  threads                   ForumThread[]        @relation("UserThreads")
   lessonProgress            LessonProgress[]
+  instructorMeetingRequests LiveMeetingRequest[] @relation("InstructorMeetings")
+  studentMeetingRequests    LiveMeetingRequest[] @relation("StudentMeetings")
+  notifications             Notification[]
+  replyVotes                ReplyVote[]          @relation("UserReplyVotes")
+  threadVotes               ThreadVote[]         @relation("UserThreadVotes")
 
   @@index([email])
   @@index([role])
 }
 
-// ============ COURSE & CONTENT ============
-
 model Course {
-  id           String   @id @default(uuid()) @db.Uuid
-  title        String   @db.VarChar(255)
-  description  String   @db.Text
-  price        Decimal  @default(0.0) @db.Decimal(10, 2)
-  category     String   @default("Uncategorized") @db.VarChar(100)
-  status       String   @default("PENDING") @db.VarChar(20)
-  published    Boolean  @default(false)
-  thumbnail    String?  @db.VarChar(500)
-  instructorId String   @db.Uuid
-  instructor   User     @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: Cascade)
-  createdAt    DateTime @default(now()) @db.Timestamptz
-  updatedAt    DateTime @updatedAt @db.Timestamptz
-
-  modules         Module[]
+  id              String               @id @default(uuid()) @db.Uuid
+  title           String               @db.VarChar(255)
+  description     String
+  price           Decimal              @default(0.0) @db.Decimal(10, 2)
+  category        String               @default("Uncategorized") @db.VarChar(100)
+  status          String               @default("PENDING") @db.VarChar(20)
+  published       Boolean              @default(false)
+  thumbnail       String?              @db.VarChar(500)
+  instructorId    String               @db.Uuid
+  createdAt       DateTime             @default(now()) @db.Timestamptz(6)
+  updatedAt       DateTime             @updatedAt @db.Timestamptz(6)
+  instructor      User                 @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: Cascade)
   enrollments     Enrollment[]
   threads         ForumThread[]        @relation("CourseThreads")
   meetingRequests LiveMeetingRequest[]
+  modules         Module[]
 
   @@index([instructorId])
   @@index([category])
@@ -68,30 +61,29 @@ model Module {
   title    String   @db.VarChar(255)
   order    Int      @default(0)
   courseId String   @db.Uuid
-  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons  Lesson[]
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@index([courseId])
 }
 
 model Lesson {
-  id       String  @id @default(uuid()) @db.Uuid
-  title    String  @db.VarChar(255)
-  content  String? @db.Text
-  videoUrl String? @db.VarChar(500)
-  order    Int     @default(0)
-  isReady  Boolean @default(true) // false when processing, true when ready for students
-  moduleId String  @db.Uuid
-  module   Module  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-
-  resources       LessonResource[]
-  meetingRequests LiveMeetingRequest[]
-
-  // Transcription relations
-  transcriptionJob TranscriptionJob?
-  transcript       Transcript?
-  quiz             Quiz?
+  id               String               @id @default(uuid()) @db.Uuid
+  title            String               @db.VarChar(255)
+  content          String?
+  videoUrl         String?              @db.VarChar(500)
+  duration         Int?
+  description      String?              @db.Text
+  order            Int                  @default(0)
+  moduleId         String               @db.Uuid
+  isReady          Boolean              @default(true)
+  module           Module               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   progress         LessonProgress[]
+  resources        LessonResource[]
+  meetingRequests  LiveMeetingRequest[]
+  quiz             Quiz?
+  transcript       Transcript?
+  transcriptionJob TranscriptionJob?
 
   @@index([moduleId])
 }
@@ -103,23 +95,21 @@ model LessonResource {
   fileName  String   @db.VarChar(255)
   fileSize  Int      @default(0)
   lessonId  String   @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) @db.Timestamptz
 
   @@index([lessonId])
 }
 
-// ============ TRANSCRIPTION SERVICE ============
-
 model TranscriptionJob {
   id        String   @id @default(uuid()) @db.Uuid
   lessonId  String   @unique @db.Uuid
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  status    String   @default("PENDING") @db.VarChar(20) // PENDING, PROCESSING, COMPLETED, FAILED
+  status    String   @default("PENDING") @db.VarChar(20)
   attempts  Int      @default(0)
-  error     String?  @db.Text
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  error     String?
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@index([status])
 }
@@ -127,25 +117,22 @@ model TranscriptionJob {
 model Transcript {
   id        String   @id @default(uuid()) @db.Uuid
   lessonId  String   @unique @db.Uuid
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  content   String   @db.Text // Full transcript text
-  segments  Json?    @db.JsonB // Structured segments with timestamps if available
+  content   String
+  segments  Json?
   language  String   @default("en") @db.VarChar(10)
-  createdAt DateTime @default(now()) @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 
   @@index([lessonId])
 }
 
-// ============ QUIZZES ============
-
 model Quiz {
-  id          String   @id @default(uuid()) @db.Uuid
-  lessonId    String   @unique @db.Uuid
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  questions   Json     @db.JsonB // Array of {question, options[], correctIndex, explanation}
-  generatedAt DateTime @default(now()) @db.Timestamptz
-
-  attempts QuizAttempt[]
+  id          String        @id @default(uuid()) @db.Uuid
+  lessonId    String        @unique @db.Uuid
+  questions   Json
+  generatedAt DateTime      @default(now()) @db.Timestamptz(6)
+  lesson      Lesson        @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  attempts    QuizAttempt[]
 
   @@index([lessonId])
 }
@@ -153,30 +140,27 @@ model Quiz {
 model QuizAttempt {
   id             String   @id @default(uuid()) @db.Uuid
   quizId         String   @db.Uuid
-  quiz           Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
   userId         String   @db.Uuid
-  score          Int // e.g., 8 out of 10
+  score          Int
   totalQuestions Int      @default(10)
-  answers        Json     @db.JsonB // User's selected answers [{questionIndex, selectedIndex}]
-  completedAt    DateTime @default(now()) @db.Timestamptz
+  answers        Json
+  completedAt    DateTime @default(now()) @db.Timestamptz(6)
+  quiz           Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
 
   @@index([quizId])
   @@index([userId])
 }
 
-// ============ ENROLLMENT & PROGRESS ============
-
 model Enrollment {
-  id         String   @id @default(uuid()) @db.Uuid
-  userId     String   @db.Uuid
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId   String   @db.Uuid
-  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  progress   Decimal  @default(0.0) @db.Decimal(5, 2)
-  completed  Boolean  @default(false)
-  enrolledAt DateTime @default(now()) @db.Timestamptz
-
+  id          String       @id @default(uuid()) @db.Uuid
+  userId      String       @db.Uuid
+  courseId    String       @db.Uuid
+  progress    Decimal      @default(0.0) @db.Decimal(5, 2)
+  completed   Boolean      @default(false)
+  enrolledAt  DateTime     @default(now()) @db.Timestamptz(6)
   certificate Certificate?
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId])
   @@index([userId])
@@ -186,50 +170,45 @@ model Enrollment {
 model LessonProgress {
   id          String   @id @default(uuid()) @db.Uuid
   userId      String   @db.Uuid
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   lessonId    String   @db.Uuid
-  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   completed   Boolean  @default(false)
-  completedAt DateTime @default(now()) @db.Timestamptz
+  completedAt DateTime @default(now()) @db.Timestamptz(6)
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, lessonId])
   @@index([userId])
   @@index([lessonId])
 }
 
-// ============ CERTIFICATES ============
-
 model Certificate {
   id           String     @id @default(uuid()) @db.Uuid
   enrollmentId String     @unique @db.Uuid
-  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   userId       String     @db.Uuid
+  issuedAt     DateTime   @default(now()) @db.Timestamptz(6)
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  issuedAt     DateTime   @default(now()) @db.Timestamptz
 
   @@index([userId])
 }
 
-// ============ FORUM MODELS ============
-
 model ForumThread {
-  id         String   @id @default(uuid()) @db.Uuid
-  title      String   @db.VarChar(500)
-  content    String   @db.Text
-  authorId   String   @db.Uuid
-  author     User     @relation("UserThreads", fields: [authorId], references: [id], onDelete: Cascade)
-  courseId   String?  @db.Uuid
-  course     Course?  @relation("CourseThreads", fields: [courseId], references: [id], onDelete: SetNull)
-  tags       String?  @db.VarChar(500)
-  upvotes    Int      @default(0)
-  viewCount  Int      @default(0)
-  isResolved Boolean  @default(false)
-  attachments Json?    @db.JsonB
-  createdAt  DateTime @default(now()) @db.Timestamptz
-  updatedAt  DateTime @updatedAt @db.Timestamptz
-
-  replies ForumReply[]
-  votes   ThreadVote[]
+  id          String       @id @default(uuid()) @db.Uuid
+  title       String       @db.VarChar(500)
+  content     String
+  authorId    String       @db.Uuid
+  courseId    String?      @db.Uuid
+  tags        String?      @db.VarChar(500)
+  upvotes     Int          @default(0)
+  viewCount   Int          @default(0)
+  isResolved  Boolean      @default(false)
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
+  attachments Json?
+  replies     ForumReply[]
+  author      User         @relation("UserThreads", fields: [authorId], references: [id], onDelete: Cascade)
+  course      Course?      @relation("CourseThreads", fields: [courseId], references: [id])
+  votes       ThreadVote[]
 
   @@index([authorId])
   @@index([courseId])
@@ -237,22 +216,21 @@ model ForumThread {
 }
 
 model ForumReply {
-  id         String       @id @default(uuid()) @db.Uuid
-  content    String       @db.Text
-  authorId   String       @db.Uuid
-  author     User         @relation("UserReplies", fields: [authorId], references: [id], onDelete: Cascade)
-  threadId   String       @db.Uuid
-  thread     ForumThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
-  parentId   String?      @db.Uuid
-  parent     ForumReply?  @relation("NestedReplies", fields: [parentId], references: [id], onDelete: SetNull)
-  children   ForumReply[] @relation("NestedReplies")
-  upvotes    Int          @default(0)
-  isAccepted Boolean      @default(false)
-  attachments Json?       @db.JsonB
-  createdAt  DateTime     @default(now()) @db.Timestamptz
-  updatedAt  DateTime     @updatedAt @db.Timestamptz
-
-  votes ReplyVote[]
+  id          String       @id @default(uuid()) @db.Uuid
+  content     String
+  authorId    String       @db.Uuid
+  threadId    String       @db.Uuid
+  parentId    String?      @db.Uuid
+  upvotes     Int          @default(0)
+  isAccepted  Boolean      @default(false)
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
+  attachments Json?
+  author      User         @relation("UserReplies", fields: [authorId], references: [id], onDelete: Cascade)
+  parent      ForumReply?  @relation("NestedReplies", fields: [parentId], references: [id])
+  children    ForumReply[] @relation("NestedReplies")
+  thread      ForumThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  votes       ReplyVote[]
 
   @@index([authorId])
   @@index([threadId])
@@ -262,11 +240,11 @@ model ForumReply {
 model ThreadVote {
   id        String      @id @default(uuid()) @db.Uuid
   userId    String      @db.Uuid
-  user      User        @relation("UserThreadVotes", fields: [userId], references: [id], onDelete: Cascade)
   threadId  String      @db.Uuid
-  thread    ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
   value     Int         @db.SmallInt
-  createdAt DateTime    @default(now()) @db.Timestamptz
+  createdAt DateTime    @default(now()) @db.Timestamptz(6)
+  thread    ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  user      User        @relation("UserThreadVotes", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, threadId])
   @@index([threadId])
@@ -275,38 +253,36 @@ model ThreadVote {
 model ReplyVote {
   id        String     @id @default(uuid()) @db.Uuid
   userId    String     @db.Uuid
-  user      User       @relation("UserReplyVotes", fields: [userId], references: [id], onDelete: Cascade)
   replyId   String     @db.Uuid
-  reply     ForumReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
   value     Int        @db.SmallInt
-  createdAt DateTime   @default(now()) @db.Timestamptz
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  reply     ForumReply @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  user      User       @relation("UserReplyVotes", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, replyId])
   @@index([replyId])
 }
 
-// ============ MEETING MODELS ============
-
 model LiveMeetingRequest {
   id            String    @id @default(uuid()) @db.Uuid
   studentId     String    @db.Uuid
-  student       User      @relation("StudentMeetings", fields: [studentId], references: [id], onDelete: Cascade)
   instructorId  String    @db.Uuid
-  instructor    User      @relation("InstructorMeetings", fields: [instructorId], references: [id], onDelete: Cascade)
   courseId      String    @db.Uuid
-  course        Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lectureId     String?   @db.Uuid
-  lecture       Lesson?   @relation(fields: [lectureId], references: [id], onDelete: SetNull)
-  objective     String    @db.Text
+  objective     String
   status        String    @default("PENDING") @db.VarChar(20)
-  preferredTime DateTime? @db.Timestamptz
+  preferredTime DateTime? @db.Timestamptz(6)
   meetingLink   String?   @db.VarChar(500)
   zoomMeetingId String?   @db.VarChar(100)
   zoomJoinUrl   String?   @db.VarChar(500)
   zoomStartUrl  String?   @db.VarChar(500)
-  notes         String?   @db.Text
-  createdAt     DateTime  @default(now()) @db.Timestamptz
-  updatedAt     DateTime  @updatedAt @db.Timestamptz
+  notes         String?
+  createdAt     DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime  @updatedAt @db.Timestamptz(6)
+  course        Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  instructor    User      @relation("InstructorMeetings", fields: [instructorId], references: [id], onDelete: Cascade)
+  lecture       Lesson?   @relation(fields: [lectureId], references: [id])
+  student       User      @relation("StudentMeetings", fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId])
   @@index([instructorId])
@@ -314,32 +290,28 @@ model LiveMeetingRequest {
   @@index([status])
 }
 
-// ============ NOTIFICATIONS ============
-
 model Notification {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @db.Uuid
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  message   String   @db.Text
+  message   String
   type      String   @default("INFO") @db.VarChar(20)
   link      String?  @db.VarChar(500)
   read      Boolean  @default(false)
-  createdAt DateTime @default(now()) @db.Timestamptz
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([read])
   @@index([createdAt])
 }
 
-// ============ AI CHAT MODELS ============
-
 model LectureChunk {
   id           String   @id @default(uuid()) @db.Uuid
   courseId     String   @db.Uuid
   lectureTitle String   @db.VarChar(255)
-  chunkText    String   @db.Text
-  embedding    String   @db.Text // JSON stringified vector
-  createdAt    DateTime @default(now()) @db.Timestamptz
+  chunkText    String
+  embedding    String
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
 
   @@index([courseId])
 }
@@ -347,41 +319,26 @@ model LectureChunk {
 model ChatMessage {
   id          String   @id @default(uuid()) @db.Uuid
   courseId    String   @db.Uuid
-  sender      String   @db.VarChar(20) // "student" | "ai"
-  messageText String   @db.Text
-  timestamp   DateTime @default(now()) @db.Timestamptz
+  sender      String   @db.VarChar(20)
+  messageText String
+  timestamp   DateTime @default(now()) @db.Timestamptz(6)
 
   @@index([courseId])
   @@index([timestamp])
 }
 
-// ============ ACTIVITY LOGS & ANALYTICS ============
-
-// Tracks individual user actions for detailed activity logging
 model UserActivityLog {
-  id        String  @id @default(uuid()) @db.Uuid
-  userId    String  @db.Uuid
-  sessionId String? @db.Uuid
-
-  // Activity details
-  eventType   String @db.VarChar(50) // page_view, click, video_play, quiz_attempt, etc.
-  eventAction String @db.VarChar(100) // started, completed, paused, submitted, etc.
-
-  // Context - what the activity relates to
-  resourceType String? @db.VarChar(50) // course, lesson, quiz, forum, etc.
-  resourceId   String? @db.Uuid
-
-  // JSONB for flexible event metadata
-  // Examples: { "videoTimestamp": 120, "quizScore": 85, "clickTarget": "enroll_button" }
-  metadata Json? @db.JsonB
-
-  // Device/client info stored as JSONB
-  // Examples: { "browser": "Chrome", "os": "Windows", "device": "desktop", "screenSize": "1920x1080" }
-  clientInfo Json? @db.JsonB
-
-  // Timing
-  duration  Int? // Duration in seconds (e.g., time on page, video watch time)
-  createdAt DateTime @default(now()) @db.Timestamptz
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  sessionId    String?  @db.Uuid
+  eventType    String   @db.VarChar(50)
+  eventAction  String   @db.VarChar(100)
+  resourceType String?  @db.VarChar(50)
+  resourceId   String?  @db.Uuid
+  metadata     Json?
+  clientInfo   Json?
+  duration     Int?
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
 
   @@index([userId])
   @@index([sessionId])
@@ -390,65 +347,33 @@ model UserActivityLog {
   @@index([createdAt])
 }
 
-// Aggregated user behavior profile for AI recommendations
 model UserBehaviorProfile {
-  id     String @id @default(uuid()) @db.Uuid
-  userId String @unique @db.Uuid
-
-  // Learning preferences as JSONB
-  // { "preferredCategories": ["web-dev", "data-science"], "preferredDifficulty": "intermediate", "avgSessionDuration": 45 }
-  learningPreferences Json? @db.JsonB
-
-  // Engagement patterns as JSONB
-  // { "peakHours": [9, 10, 14, 15], "weekdayActivity": { "Mon": 0.8, "Tue": 0.6 }, "avgLessonsPerSession": 3 }
-  engagementPatterns Json? @db.JsonB
-
-  // Content interaction signals as JSONB
-  // { "videoCompletionRate": 0.75, "quizAvgScore": 82, "forumParticipation": "high", "notesTaken": 15 }
-  contentInteractions Json? @db.JsonB
-
-  // Skill profile as JSONB
-  // { "completedTopics": ["html", "css", "js-basics"], "skillLevels": { "javascript": 3, "python": 1 } }
-  skillProfile Json? @db.JsonB
-
-  // Recommendation signals as JSONB
-  // { "recentlyViewed": ["course-id-1", "course-id-2"], "wishlist": ["course-id-3"], "dislikes": ["topic-x"] }
-  recommendationSignals Json? @db.JsonB
-
-  createdAt DateTime @default(now()) @db.Timestamptz
-  updatedAt DateTime @updatedAt @db.Timestamptz
+  id                    String   @id @default(uuid()) @db.Uuid
+  userId                String   @unique @db.Uuid
+  learningPreferences   Json?
+  engagementPatterns    Json?
+  contentInteractions   Json?
+  skillProfile          Json?
+  recommendationSignals Json?
+  createdAt             DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime @updatedAt @db.Timestamptz(6)
 
   @@index([userId])
 }
 
-// AI-generated recommendations
 model AIRecommendation {
-  id     String @id @default(uuid()) @db.Uuid
-  userId String @db.Uuid
-
-  // Recommendation type
-  recommendationType String @db.VarChar(50) // course, lesson, topic, skill_path, etc.
-
-  // What's being recommended
-  resourceType String @db.VarChar(50) // course, lesson, quiz, etc.
-  resourceId   String @db.Uuid
-
-  // Recommendation details as JSONB
-  // { "score": 0.95, "reasons": ["matches_interest", "trending", "peer_recommended"], "position": 1 }
-  details Json? @db.JsonB
-
-  // Model info as JSONB
-  // { "modelVersion": "v2.1", "algorithm": "collaborative_filtering", "confidence": 0.87 }
-  modelInfo Json? @db.JsonB
-
-  // User interaction with recommendation
-  status      String    @default("PENDING") @db.VarChar(20) // PENDING, CLICKED, ENROLLED, DISMISSED
-  clickedAt   DateTime? @db.Timestamptz
-  dismissedAt DateTime? @db.Timestamptz
-
-  // Validity
-  expiresAt DateTime? @db.Timestamptz
-  createdAt DateTime  @default(now()) @db.Timestamptz
+  id                 String    @id @default(uuid()) @db.Uuid
+  userId             String    @db.Uuid
+  recommendationType String    @db.VarChar(50)
+  resourceType       String    @db.VarChar(50)
+  resourceId         String    @db.Uuid
+  details            Json?
+  modelInfo          Json?
+  status             String    @default("PENDING") @db.VarChar(20)
+  clickedAt          DateTime? @db.Timestamptz(6)
+  dismissedAt        DateTime? @db.Timestamptz(6)
+  expiresAt          DateTime? @db.Timestamptz(6)
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6)
 
   @@index([userId])
   @@index([recommendationType])
@@ -457,33 +382,17 @@ model AIRecommendation {
   @@index([createdAt])
 }
 
-// Course-level learning analytics for instructors and admins
 model LearningAnalytics {
-  id       String @id @default(uuid()) @db.Uuid
-  courseId String @db.Uuid
-
-  // Time period for the analytics snapshot
-  periodStart DateTime @db.Timestamptz
-  periodEnd   DateTime @db.Timestamptz
-  periodType  String   @db.VarChar(20) // daily, weekly, monthly
-
-  // Engagement metrics as JSONB
-  // { "totalViews": 500, "uniqueViewers": 120, "avgTimeSpent": 1800, "bounceRate": 0.15 }
-  engagementMetrics Json? @db.JsonB
-
-  // Completion metrics as JSONB
-  // { "enrollments": 50, "completions": 35, "dropoffPoints": [{"lessonId": "...", "rate": 0.25}] }
-  completionMetrics Json? @db.JsonB
-
-  // Quiz/assessment metrics as JSONB
-  // { "avgScore": 78, "passRate": 0.85, "difficultQuestions": [{"questionId": "...", "failRate": 0.6}] }
-  assessmentMetrics Json? @db.JsonB
-
-  // User feedback as JSONB
-  // { "avgRating": 4.5, "npsScore": 72, "commonFeedback": ["great_content", "needs_more_examples"] }
-  feedbackMetrics Json? @db.JsonB
-
-  createdAt DateTime @default(now()) @db.Timestamptz
+  id                String   @id @default(uuid()) @db.Uuid
+  courseId          String   @db.Uuid
+  periodStart       DateTime @db.Timestamptz(6)
+  periodEnd         DateTime @db.Timestamptz(6)
+  periodType        String   @db.VarChar(20)
+  engagementMetrics Json?
+  completionMetrics Json?
+  assessmentMetrics Json?
+  feedbackMetrics   Json?
+  createdAt         DateTime @default(now()) @db.Timestamptz(6)
 
   @@unique([courseId, periodStart, periodType])
   @@index([courseId])
@@ -491,27 +400,15 @@ model LearningAnalytics {
   @@index([periodType])
 }
 
-// User session tracking for analytics
 model UserSession {
-  id     String @id @default(uuid()) @db.Uuid
-  userId String @db.Uuid
-
-  // Session details
-  startedAt DateTime  @default(now()) @db.Timestamptz
-  endedAt   DateTime? @db.Timestamptz
-  duration  Int? // Total session duration in seconds
-
-  // Device/location info as JSONB
-  // { "ip": "...", "country": "US", "city": "NYC", "browser": "Chrome", "os": "macOS", "device": "desktop" }
-  deviceInfo Json? @db.JsonB
-
-  // Session summary as JSONB
-  // { "pagesViewed": 12, "coursesViewed": ["id1", "id2"], "lessonsCompleted": 3, "quizzesTaken": 1 }
-  sessionSummary Json? @db.JsonB
-
-  // UTM/referrer tracking as JSONB
-  // { "referrer": "google.com", "utm_source": "newsletter", "utm_campaign": "summer2024" }
-  trafficSource Json? @db.JsonB
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @db.Uuid
+  startedAt      DateTime  @default(now()) @db.Timestamptz(6)
+  endedAt        DateTime? @db.Timestamptz(6)
+  duration       Int?
+  deviceInfo     Json?
+  sessionSummary Json?
+  trafficSource  Json?
 
   @@index([userId])
   @@index([startedAt])

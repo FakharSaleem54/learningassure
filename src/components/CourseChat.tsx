@@ -93,6 +93,7 @@ export default function CourseChat({ courseId, activeLessonTitle, activeLessonId
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
+        console.log('Sending message:', input);
 
         const userMsg: Message = { id: Date.now().toString(), sender: 'student', text: input };
         const aiMsgId = (Date.now() + 1).toString();
@@ -297,6 +298,7 @@ export default function CourseChat({ courseId, activeLessonTitle, activeLessonId
                     disabled={isLoading}
                 />
                 <button
+                    type="button"
                     onClick={handleSend}
                     disabled={isLoading || !input.trim()}
                     className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-2 rounded-full hover:shadow-lg disabled:opacity-50 transition-all hover:scale-105"

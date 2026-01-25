@@ -36,6 +36,7 @@ export async function generateAIResponse(options: AIRequestOptions): Promise<AIR
     console.log('[AI Service] Using:', isOllama ? 'Ollama' : 'External API');
     console.log('[AI Service] URL:', AI_API_URL);
     console.log('[AI Service] Model:', AI_MODEL);
+    console.log('[AI Service] Key Loaded:', AI_API_KEY ? 'Yes (' + AI_API_KEY.substring(0, 5) + '...)' : 'No');
 
     try {
         if (isOllama) {
@@ -91,9 +92,16 @@ export async function generateAIResponse(options: AIRequestOptions): Promise<AIR
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                const errorMessage = errorData.error?.message || response.statusText;
-                throw new Error(`AI API error: ${errorMessage}`);
+                const errorText = await response.text();
+                console.error('[AI Service] API Error Status:', response.status);
+                console.error('[AI Service] API Error Body:', errorText);
+                try {
+                    const errorData = JSON.parse(errorText);
+                    const errorMessage = errorData.error?.message || response.statusText;
+                    throw new Error(`AI API error: ${errorMessage}`);
+                } catch (e) {
+                    throw new Error(`AI API error: ${response.status} ${response.statusText} - ${errorText}`);
+                }
             }
 
             const data = await response.json();
@@ -188,8 +196,10 @@ export async function generateStreamingAIResponse(options: AIRequestOptions): Pr
             clearTimeout(timeoutId);
 
             if (!response.ok || !response.body) {
-                const errorData = await response.json().catch(() => ({}));
-                return { stream: null, error: errorData.error?.message || response.statusText };
+                const errorText = await response.text();
+                console.error('[AI Service] Stream API Error Status:', response.status);
+                console.error('[AI Service] Stream API Error Body:', errorText);
+                return { stream: null, error: `AI API error: ${response.status} ${response.statusText}` };
             }
 
             const encoder = new TextEncoder();

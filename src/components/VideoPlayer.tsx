@@ -19,17 +19,29 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         );
     }
 
+    // Handle relative Supabase paths (legacy support for videos uploaded before the fix)
+    let videoUrl = url;
+    if (url && !url.startsWith('http') && !url.startsWith('blob:')) {
+        // Construct public URL for Supabase Storage 'videos' bucket
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        if (supabaseUrl) {
+            // Remove leading slash if present
+            const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+            videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${cleanPath}`;
+        }
+    }
+
     // Detect video type and render appropriate player
-    const isYouTube = url.includes('youtube.com') || url.includes('youtu.be');
-    const isVimeo = url.includes('vimeo.com');
+    const isYouTube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
+    const isVimeo = videoUrl.includes('vimeo.com');
 
     if (isYouTube) {
         // Extract YouTube video ID
         let videoId = '';
-        if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1]?.split('?')[0] || '';
-        } else if (url.includes('v=')) {
-            videoId = url.split('v=')[1]?.split('&')[0] || '';
+        if (videoUrl.includes('youtu.be/')) {
+            videoId = videoUrl.split('youtu.be/')[1]?.split('?')[0] || '';
+        } else if (videoUrl.includes('v=')) {
+            videoId = videoUrl.split('v=')[1]?.split('&')[0] || '';
         }
 
         return (
@@ -47,7 +59,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
 
     if (isVimeo) {
         // Extract Vimeo video ID
-        const videoId = url.split('vimeo.com/')[1]?.split('?')[0] || '';
+        const videoId = videoUrl.split('vimeo.com/')[1]?.split('?')[0] || '';
 
         return (
             <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
@@ -66,7 +78,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
     return (
         <div className="aspect-video rounded-lg overflow-hidden shadow-lg bg-black">
             <video
-                src={url}
+                src={videoUrl}
                 controls
                 className="w-full h-full"
                 title={title}

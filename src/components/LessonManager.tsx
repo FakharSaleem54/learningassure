@@ -47,8 +47,13 @@ export default function LessonManager({ module }: { module: any }) {
 
             if (uploadError) throw uploadError
 
+            // Get public URL to store in DB
+            const { data: { publicUrl } } = supabase.storage
+                .from('videos')
+                .getPublicUrl(filePath)
+
             setUploadSuccess(true)
-            return filePath
+            return publicUrl
         } catch (error: any) {
             console.error('Upload failed:', error)
             setUploadError(error.message || 'Upload failed')

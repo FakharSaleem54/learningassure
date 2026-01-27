@@ -68,6 +68,12 @@ function checkConnection(connectionString, name) {
     }
 }
 
+// Hardcoded fallback for debugging if .env loading fails
+const FALLBACK_DB_URL = "postgresql://postgres.tbjnroriggjjguaumnvg:Nl4BMzlfUjMk0Zr1@db.tbjnroriggjjguaumnvg.supabase.co:5432/postgres";
+
 console.log("Checking DB connections...");
-checkConnection(process.env.DATABASE_URL, "DATABASE_URL");
-checkConnection(process.env.DIRECT_URL, "DIRECT_URL");
+const dbUrl = process.env.DATABASE_URL || FALLBACK_DB_URL;
+const directUrl = process.env.DIRECT_URL || dbUrl;
+
+checkConnection(dbUrl, "DATABASE_URL");
+checkConnection(directUrl, "DIRECT_URL");

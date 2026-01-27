@@ -1,11 +1,61 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
 interface VideoPlayerProps {
     url: string | null;
     title: string;
 }
 
 export default function VideoPlayer({ url, title }: VideoPlayerProps) {
+    const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        async function getSignedUrl() {
+            if (!url) return;
+
+            // If it's already a full URL (YouTube, Vimeo, or external), use directly
+            if (url.startsWith('http') || url.startsWith('blob:')) {
+                setSignedUrl(url);
+                return;
+            }
+
+            // For Supabase storage paths, generate a signed URL
+            setLoading(true);
+            setError(null);
+
+            try {
+                const supabase = createClient();
+
+                // Clean the path - remove leading slash if present
+                const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+
+                const { data, error: signError } = await supabase
+                    .storage
+                    .from('videos')
+                    .createSignedUrl(cleanPath, 60 * 60); // 1 hour expiry
+
+                if (signError) {
+                    console.error('Error creating signed URL:', signError);
+                    setError('Failed to load video');
+                    return;
+                }
+
+                setSignedUrl(data.signedUrl);
+            } catch (err) {
+                console.error('Error fetching signed URL:', err);
+                setError('Failed to load video');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        getSignedUrl();
+    }, [url]);
+
     if (!url) {
         return (
             <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
@@ -19,17 +69,31 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         );
     }
 
-    // Handle relative Supabase paths (legacy support for videos uploaded before the fix)
-    let videoUrl = url;
-    if (url && !url.startsWith('http') && !url.startsWith('blob:')) {
-        // Construct public URL for Supabase Storage 'videos' bucket
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        if (supabaseUrl) {
-            // Remove leading slash if present
-            const cleanPath = url.startsWith('/') ? url.slice(1) : url;
-            videoUrl = `${supabaseUrl}/storage/v1/object/public/videos/${cleanPath}`;
-        }
+    if (loading) {
+        return (
+            <div className="aspect-video bg-gray-900 rounded-lg flex items-center justify-center">
+                <div className="text-center text-gray-400">
+                    <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p className="text-sm">Loading video...</p>
+                </div>
+            </div>
+        );
     }
+
+    if (error) {
+        return (
+            <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border border-red-200">
+                <div className="text-center text-red-500">
+                    <svg className="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <p className="text-sm">{error}</p>
+                </div>
+            </div>
+        );
+    }
+
+    const videoUrl = signedUrl || url;
 
     // Detect video type and render appropriate player
     const isYouTube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
@@ -74,7 +138,7 @@ export default function VideoPlayer({ url, title }: VideoPlayerProps) {
         );
     }
 
-    // Default: HTML5 video player for direct video URLs
+    // Default: HTML5 video player for direct video URLs (including signed URLs)
     return (
         <div className="aspect-video rounded-lg overflow-hidden shadow-lg bg-black">
             <video

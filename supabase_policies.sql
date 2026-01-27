@@ -12,9 +12,10 @@ ON storage.objects FOR SELECT
 USING ( bucket_id = 'videos' );
 
 -- 3. Allow Authenticated Updates/Uploads (Instructors)
-CREATE POLICY "Authenticated Videos Upload"
+-- 3. Allow Public/Anon Updates (Since we use Custom Auth, not Supabase Auth)
+CREATE POLICY "Public Videos Upload"
 ON storage.objects FOR INSERT
-TO authenticated
+TO public
 WITH CHECK ( bucket_id = 'videos' );
 
 -- 4. Allow Owners to Update/Delete their own videos

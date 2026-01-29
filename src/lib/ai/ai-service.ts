@@ -34,7 +34,7 @@ export async function generateAIResponse(options: AIRequestOptions): Promise<AIR
     const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
 
     console.log('[AI Service] Using:', isOllama ? 'Ollama' : 'External API');
-    console.log('[AI Service] URL:', AI_API_URL);
+    console.log('[AI Service] URL:', AI_API_URL ? AI_API_URL.replace(/:\/\/.*@/, '://***@') : 'UNDEFINED');
     console.log('[AI Service] Model:', AI_MODEL);
     console.log('[AI Service] Key Loaded:', AI_API_KEY ? 'Yes (' + AI_API_KEY.substring(0, 5) + '...)' : 'No');
 

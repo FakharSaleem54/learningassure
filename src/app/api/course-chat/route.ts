@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma';
 import { generateAIResponse, generateStreamingAIResponse, classifyIntent } from '@/lib/ai/ai-service';
 import { AIContextBuilder } from '@/lib/ai/context-builder';
 
+export const runtime = 'nodejs';
+export const maxDuration = 60; // Allow 60 seconds for AI processing
+
 export async function POST(req: NextRequest) {
     try {
         const { question, courseId, currentLectureTitle, currentLectureId, stream = false } = await req.json();
@@ -83,7 +86,7 @@ PRIMARY CONTEXT SOURCES:
 - Video transcript
 - Course subject metadata
 
-INTELLIGENCE RULESET (UPDATED):
+INTELLIGENCE RULESET (CRITICAL):
 
 1. CLASSIFY USER QUESTIONS:
 

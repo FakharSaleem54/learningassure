@@ -11,15 +11,18 @@ export async function getSignedVideoUrl(path: string, expiresInSeconds = 3600): 
     // If it's already a full URL (public or external), return as is
     if (path.startsWith('http')) return path
 
+    // Clean the path - remove leading slash if present ( Supabase Storage doesn't like them)
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path
+
     try {
         const supabase = await createClient()
         const { data, error } = await supabase
             .storage
             .from('videos')
-            .createSignedUrl(path, expiresInSeconds)
+            .createSignedUrl(cleanPath, expiresInSeconds)
 
         if (error) {
-            console.error('Error signing URL:', error)
+            console.error(`Error signing URL for path: "${path}"`, error)
             return null
         }
 

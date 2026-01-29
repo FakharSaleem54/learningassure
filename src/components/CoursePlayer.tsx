@@ -93,7 +93,7 @@ export default function CoursePlayer({ course, modules, completionButton, instru
     return (
         <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] min-h-[calc(100vh-64px)]">
             {/* Sidebar */}
-            <aside className="bg-white border-r border-gray-200 p-6 h-full overflow-y-auto flex flex-col">
+            <aside className="bg-white border-r border-gray-200 p-6 h-full overflow-y-auto flex flex-col order-2 lg:order-1">
                 <div className="mb-8">
                     <Link href="/dashboard" className="text-sm text-gray-500 hover:text-primary mb-4 flex items-center gap-2 transition-colors">
                         ← Back to Dashboard
@@ -138,7 +138,7 @@ export default function CoursePlayer({ course, modules, completionButton, instru
             </aside>
 
             {/* Main Content */}
-            <main className="p-6 lg:p-12 w-full max-w-5xl mx-auto">
+            <main className="p-6 lg:p-12 w-full max-w-5xl mx-auto order-1 lg:order-2">
                 {activeLesson ? (
                     <div>
                         <div className="flex flex-col md:flex-row justify-between items-start mb-6 gap-4">

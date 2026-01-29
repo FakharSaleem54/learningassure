@@ -28,7 +28,7 @@ export default async function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary to-indigo-600 text-white min-h-[500px] flex items-center pt-12 pb-16">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary to-indigo-600 text-white min-h-[auto] lg:min-h-[500px] flex items-center pt-12 pb-16">
         <div className="absolute inset-0 bg-[url('/assets/pattern.png')] opacity-10 mix-blend-overlay"></div>
         <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
           <div className="text-center lg:text-left">
@@ -58,8 +58,8 @@ export default async function Home() {
               <p>Join {userCount.toLocaleString()}+ learners today</p>
             </div>
           </div>
-          <div className="relative hidden lg:block">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/10 rounded-full blur-3xl -z-10"></div>
+          <div className="relative mt-12 lg:mt-0">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] lg:w-[600px] lg:h-[600px] bg-white/10 rounded-full blur-3xl -z-10"></div>
             <img
               src="/assets/images/logo.png"
               alt="Learning Assure Logo"
@@ -233,7 +233,7 @@ export default async function Home() {
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">Start your learning journey with our most popular courses</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center sm:place-items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((course: any, index: number) => (
               <div key={course.id} className="w-full">
                 <CourseCard course={course} />

@@ -3,6 +3,7 @@ import { getSession } from '@/lib/session';
 import { prisma } from '@/lib/prisma';
 import UserMenu from './UserMenu';
 import NotificationList from '@/components/NotificationList';
+import MobileMenu from './MobileMenu';
 
 // Navigation configuration with role-based visibility
 const navItems = [
@@ -49,7 +50,7 @@ export default async function Header() {
 
             <div className="container mx-auto px-4 h-full flex items-center justify-between relative z-10">
                 <Link href="/" className="flex items-center gap-2 font-bold text-xl text-white drop-shadow-md">
-                    <img src="/assets/images/logo.png" alt="Learning Assure" className="h-16 w-auto" />
+                    <img src="/assets/images/logo.png" alt="Learning Assure" className="h-12 md:h-16 w-auto" />
                 </Link>
 
                 <nav className="hidden md:flex items-center">
@@ -69,12 +70,12 @@ export default async function Header() {
 
                 <div className="flex items-center gap-4">
                     {session ? (
-                        <div className="flex items-center gap-4">
+                        <div className="hidden md:flex items-center gap-4">
                             <NotificationList />
                             <UserMenu session={{ ...session, name: userName }} />
                         </div>
                     ) : (
-                        <div className="flex items-center gap-3">
+                        <div className="hidden md:flex items-center gap-3">
                             <Link
                                 href="/login"
                                 className="px-4 py-2 text-sm font-medium text-white border-2 border-white rounded-md hover:bg-white/20 transition-colors backdrop-blur-sm"
@@ -89,6 +90,9 @@ export default async function Header() {
                             </Link>
                         </div>
                     )}
+
+                    {/* Mobile Menu */}
+                    <MobileMenu navItems={visibleNavItems} user={session ? { ...session, name: userName } : null} />
                 </div>
             </div>
         </header>

@@ -6,8 +6,21 @@
  */
 
 // Environment variables (loaded from .env)
+// Environment variables (loaded from .env)
 const AI_API_KEY = process.env.AI_API_KEY || '';
-const AI_API_URL = process.env.AI_API_URL || 'http://localhost:11434';
+
+// Helper to resolve relative URLs in serverless environments
+function getBaseUrl() {
+    if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+    return 'http://localhost:3000';
+}
+
+const rawAiUrl = process.env.AI_API_URL || 'http://localhost:11434';
+const AI_API_URL = rawAiUrl.startsWith('/')
+    ? `${getBaseUrl()}${rawAiUrl}`
+    : rawAiUrl;
+
 const AI_MODEL = process.env.AI_MODEL || 'meta-llama/llama-3.3-70b-instruct:free';
 
 // Detect if using Ollama (localhost)

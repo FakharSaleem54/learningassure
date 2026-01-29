@@ -42,7 +42,13 @@ async function initExtractor() {
 
     try {
         // Dynamic import to avoid build-time issues
-        const { pipeline } = await import('@xenova/transformers');
+        const { pipeline, env } = await import('@xenova/transformers');
+
+        // Configuration for serverless environments (Vercel)
+        env.useBrowserCache = false;
+        env.allowLocalModels = false; // Force fetching from remote to avoid local path issues
+        // env.cacheDir = '/tmp'; // Optional: Use temporary directory if caching is needed
+
         extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
         console.log('AI Embeddings: Using @xenova/transformers');
     } catch (error) {

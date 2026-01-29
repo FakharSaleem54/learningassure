@@ -8,7 +8,7 @@
 // Environment variables (loaded from .env)
 const AI_API_KEY = process.env.AI_API_KEY || '';
 const AI_API_URL = process.env.AI_API_URL || 'http://localhost:11434';
-const AI_MODEL = process.env.AI_MODEL || 'qwen2.5:3b';
+const AI_MODEL = process.env.AI_MODEL || 'xiaomi/mimo-v2-flash:free';
 
 // Detect if using Ollama (localhost)
 const isOllama = AI_API_URL.includes('localhost:11434') || AI_API_URL.includes('127.0.0.1:11434');

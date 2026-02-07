@@ -12,6 +12,8 @@ type MeetingRequest = {
     preferredTime: Date | null
     createdAt: Date
     lecture?: { title: string } | null
+    zoomStartUrl?: string | null
+    zoomJoinUrl?: string | null
 }
 
 export default function InstructorMeetingDashboard({ requests }: { requests: MeetingRequest[] }) {
@@ -171,8 +173,20 @@ export default function InstructorMeetingDashboard({ requests }: { requests: Mee
                     )}
 
                     {request.status === 'APPROVED' && (
-                        <div className="mt-4 p-3 bg-green-50 border border-green-100 rounded-lg text-sm text-green-800 flex items-center gap-2">
-                            <span>✓</span> Scheduled for {request.preferredTime ? new Date(request.preferredTime).toLocaleString() : 'Confirmed Time'}
+                        <div className="mt-4 p-3 bg-green-50 border border-green-100 rounded-lg text-sm text-green-800">
+                            <div className="flex items-center gap-2 mb-2">
+                                <span>✓</span> Scheduled for {request.preferredTime ? new Date(request.preferredTime).toLocaleString() : 'Confirmed Time'}
+                            </div>
+                            {request.zoomStartUrl && (
+                                <a
+                                    href={request.zoomStartUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+                                >
+                                    🎥 Start Meeting (Host)
+                                </a>
+                            )}
                         </div>
                     )}
                 </div>

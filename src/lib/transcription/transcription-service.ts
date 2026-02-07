@@ -63,97 +63,96 @@ export async function processJob(jobId: string) {
                     .from('videos')
                     .download(videoPath);
 
-                if (!error && data) {
-                    // Save to temp file
-                    const tempDir = join(process.cwd(), 'temp_uploads');
-                    await fs.mkdir(tempDir, { recursive: true });
-                    const tempPath = join(tempDir, `download_${jobId}_${Date.now()}.mp4`);
+                // Save to temp file (Use /tmp for Vercel compatibility)
+                const tempDir = '/tmp';
+                await fs.mkdir(tempDir, { recursive: true });
+                const tempPath = join(tempDir, `download_${jobId}_${Date.now()}.mp4`);
 
-                    const buffer = Buffer.from(await data.arrayBuffer());
-                    await fs.writeFile(tempPath, buffer);
+                const buffer = Buffer.from(await data.arrayBuffer());
+                await fs.writeFile(tempPath, buffer);
 
-                    absoluteVideoPath = tempPath;
-                    isTempFile = true;
-                    console.log(`[TranscriptionService] Downloaded video to temp file: ${absoluteVideoPath}`);
-                } else {
-                    console.error(`[TranscriptionService] Supabase download failed: ${error?.message}`);
-                }
+                absoluteVideoPath = tempPath;
+                isTempFile = true;
+                console.log(`[TranscriptionService] Downloaded video to temp file: ${absoluteVideoPath}`);
             } else {
-                console.error(`[TranscriptionService] Skipping Supabase check - credentials missing`);
+                console.error(`[TranscriptionService] Supabase download failed: ${error?.message}`);
             }
+        } else {
+            console.error(`[TranscriptionService] Skipping Supabase check - credentials missing`);
         }
+    }
 
         // Final check
         if (!absoluteVideoPath) {
-            throw new Error("Could not result video path");
-        }
+        throw new Error("Could not result video path");
+    }
 
-        try {
-            await fs.access(absoluteVideoPath)
-        } catch (e) {
-            console.error(`[TranscriptionService] Video file not found at ${absoluteVideoPath}`)
-            await updateJobStatus(jobId, 'FAILED', 'Video file not found')
-            return
-        }
+    try {
+        await fs.access(absoluteVideoPath)
+    } catch (e) {
+        console.error(`[TranscriptionService] Video file not found at ${absoluteVideoPath}`)
+        await updateJobStatus(jobId, 'FAILED', 'Video file not found')
+        return
+    }
 
-        // 3. Extract Audio (Simulated)
-        console.log(`[TranscriptionService] Simulating audio extraction for ${absoluteVideoPath}...`)
-        await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate work
+    // 3. Extract Audio (Simulated)
+    console.log(`[TranscriptionService] Simulating audio extraction for ${absoluteVideoPath}...`)
+    await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate work
 
-        // 4. Perform Transcription (Real Python Script)
-        const transcriptText = await performRealTranscription(absoluteVideoPath)
+    // 4. Perform Transcription (Real Python Script)
+    const transcriptText = await performRealTranscription(absoluteVideoPath)
 
-        // 5. Save Transcript and mark lesson as ready
-        await prisma.$transaction([
-            prisma.transcript.upsert({
-                where: { lessonId: job.lessonId },
-                create: {
-                    lessonId: job.lessonId,
-                    content: transcriptText,
-                    language: 'en'
-                },
-                update: {
-                    content: transcriptText
-                }
-            }),
-            prisma.transcriptionJob.update({
-                where: { id: jobId },
-                data: {
-                    status: 'COMPLETED',
-                    updatedAt: new Date()
-                }
-            }),
-            // Mark lesson as ready for students after successful transcription
-            prisma.lesson.update({
-                where: { id: job.lessonId },
-                data: { isReady: true }
-            })
-        ])
-
-        // 6. Generate Embeddings for RAG
-        try {
-            console.log(`[TranscriptionService] Generating semantic index for "${job.lesson.title}"...`)
-            await generateSearchVectors(job.lesson.module?.courseId || '', job.lesson.title, transcriptText);
-        } catch (vectorError) {
-            console.error(`[TranscriptionService] Failed to generate embeddings:`, vectorError);
-        }
-
-        console.log(`[TranscriptionService] Job ${jobId} completed successfully`)
-
-    } catch (error) {
-        console.error(`[TranscriptionService] Error processing job ${jobId}:`, error)
-        await updateJobStatus(jobId, 'FAILED', (error as Error).message)
-    } finally {
-        // Cleanup temp file
-        if (isTempFile && absoluteVideoPath) {
-            try {
-                await fs.unlink(absoluteVideoPath)
-                console.log(`[TranscriptionService] Cleaned up temp file`)
-            } catch (cleanupError) {
-                console.error(`[TranscriptionService] Failed to cleanup temp file:`, cleanupError)
+    // 5. Save Transcript and mark lesson as ready
+    await prisma.$transaction([
+        prisma.transcript.upsert({
+            where: { lessonId: job.lessonId },
+            create: {
+                lessonId: job.lessonId,
+                content: transcriptText,
+                language: 'en'
+            },
+            update: {
+                content: transcriptText
             }
+        }),
+        prisma.transcriptionJob.update({
+            where: { id: jobId },
+            data: {
+                status: 'COMPLETED',
+                updatedAt: new Date()
+            }
+        }),
+        // Mark lesson as ready for students after successful transcription
+        prisma.lesson.update({
+            where: { id: job.lessonId },
+            data: { isReady: true }
+        })
+    ])
+
+    // 6. Generate Embeddings for RAG
+    try {
+        console.log(`[TranscriptionService] Generating semantic index for "${job.lesson.title}"...`)
+        await generateSearchVectors(job.lesson.module?.courseId || '', job.lesson.title, transcriptText);
+    } catch (vectorError) {
+        console.error(`[TranscriptionService] Failed to generate embeddings:`, vectorError);
+    }
+
+    console.log(`[TranscriptionService] Job ${jobId} completed successfully`)
+
+} catch (error) {
+    console.error(`[TranscriptionService] Error processing job ${jobId}:`, error)
+    await updateJobStatus(jobId, 'FAILED', (error as Error).message)
+} finally {
+    // Cleanup temp file
+    if (isTempFile && absoluteVideoPath) {
+        try {
+            await fs.unlink(absoluteVideoPath)
+            console.log(`[TranscriptionService] Cleaned up temp file`)
+        } catch (cleanupError) {
+            console.error(`[TranscriptionService] Failed to cleanup temp file:`, cleanupError)
         }
     }
+}
 }
 
 async function updateJobStatus(jobId: string, status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED', error?: string) {

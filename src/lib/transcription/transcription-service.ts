@@ -205,46 +205,43 @@ async function generateSearchVectors(courseId: string, lectureTitle: string, ful
     }
 }
 
-// Real Transcription using OpenAI Whisper API
+// Real Transcription using Custom Render Service
 async function performRealTranscription(videoPath: string): Promise<string> {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-        throw new Error('OPENAI_API_KEY is not configured in environment variables');
+    const transcriberUrl = process.env.TRANSCRIBER_URL;
+
+    if (!transcriberUrl) {
+        throw new Error('TRANSCRIBER_URL is not configured in environment variables');
     }
 
-    console.log(`[TranscriptionService] Sending ${videoPath} to OpenAI Whisper API...`);
+    console.log(`[TranscriptionService] Sending ${videoPath} to Custom Service at ${transcriberUrl}...`);
 
     try {
         const fileBuffer = await fs.readFile(videoPath);
         const fileName = videoPath.split(/[\\/]/).pop() || 'audio.mp4';
 
-        // Detect file type from extension for proper Blob creation
+        // Detect file type from extension
         const extension = fileName.split('.').pop()?.toLowerCase() || 'mp4';
         const mimeType = extension === 'mp3' ? 'audio/mpeg' : 'video/mp4';
 
         const formData = new FormData();
         formData.append('file', new Blob([fileBuffer], { type: mimeType }), fileName);
-        formData.append('model', 'whisper-1');
 
-        const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        const response = await fetch(`${transcriberUrl}/transcribe`, {
             method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`
-            },
             body: formData
         });
 
         if (!response.ok) {
             const errorText = await response.text();
-            console.error(`[TranscriptionService] OpenAI API Error: ${response.status} ${response.statusText}`, errorText);
-            throw new Error(`OpenAI Whisper API failed: ${response.statusText} - ${errorText}`);
+            console.error(`[TranscriptionService] Custom API Error: ${response.status} ${response.statusText}`, errorText);
+            throw new Error(`Custom Transcriber API failed: ${response.statusText} - ${errorText}`);
         }
 
         const data = await response.json();
         const transcript = data.text || '';
 
         if (!transcript.trim()) {
-            console.warn('[TranscriptionService] Warning: OpenAI returned an empty transcript.');
+            console.warn('[TranscriptionService] Warning: Custom service returned an empty transcript.');
         }
 
         return transcript.trim();

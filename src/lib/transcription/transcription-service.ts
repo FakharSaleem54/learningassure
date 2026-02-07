@@ -205,44 +205,51 @@ async function generateSearchVectors(courseId: string, lectureTitle: string, ful
     }
 }
 
-// Real Transcription using Python script
-import { spawn } from 'child_process';
-
+// Real Transcription using OpenAI Whisper API
 async function performRealTranscription(videoPath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const scriptPath = join(process.cwd(), 'src', 'lib', 'transcription', 'transcriber.py');
-        console.log(`[TranscriptionService] Spawning Python script: ${scriptPath} for ${videoPath}`);
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+        throw new Error('OPENAI_API_KEY is not configured in environment variables');
+    }
 
-        const pythonProcess = spawn('python', [scriptPath, videoPath]);
+    console.log(`[TranscriptionService] Sending ${videoPath} to OpenAI Whisper API...`);
 
-        let transcript = '';
-        let errorOutput = '';
+    try {
+        const fileBuffer = await fs.readFile(videoPath);
+        const fileName = videoPath.split(/[\\/]/).pop() || 'audio.mp4';
 
-        pythonProcess.stdout.on('data', (data) => {
-            const chunk = data.toString();
-            console.log(`[Python stdout]: ${chunk}`);
-            transcript += chunk;
+        // Detect file type from extension for proper Blob creation
+        const extension = fileName.split('.').pop()?.toLowerCase() || 'mp4';
+        const mimeType = extension === 'mp3' ? 'audio/mpeg' : 'video/mp4';
+
+        const formData = new FormData();
+        formData.append('file', new Blob([fileBuffer], { type: mimeType }), fileName);
+        formData.append('model', 'whisper-1');
+
+        const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: formData
         });
 
-        pythonProcess.stderr.on('data', (data) => {
-            const chunk = data.toString();
-            console.error(`[Python stderr]: ${chunk}`);
-            errorOutput += chunk;
-        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`[TranscriptionService] OpenAI API Error: ${response.status} ${response.statusText}`, errorText);
+            throw new Error(`OpenAI Whisper API failed: ${response.statusText} - ${errorText}`);
+        }
 
-        pythonProcess.on('close', (code) => {
-            if (code !== 0) {
-                reject(new Error(`Python transcriber failed with exit code ${code}: ${errorOutput}`));
-            } else {
-                if (!transcript.trim()) {
-                    console.warn('[TranscriptionService] Warning: Transcript response was empty.');
-                }
-                resolve(transcript.trim());
-            }
-        });
+        const data = await response.json();
+        const transcript = data.text || '';
 
-        pythonProcess.on('error', (err) => {
-            reject(new Error(`Failed to start python process: ${err.message}`));
-        });
-    });
+        if (!transcript.trim()) {
+            console.warn('[TranscriptionService] Warning: OpenAI returned an empty transcript.');
+        }
+
+        return transcript.trim();
+    } catch (error) {
+        console.error('[TranscriptionService] Transcription error:', error);
+        throw error;
+    }
 }

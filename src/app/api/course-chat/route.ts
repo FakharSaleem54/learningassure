@@ -21,12 +21,26 @@ export async function POST(req: NextRequest) {
         // 1. Classify Intent using centralized AI service
         const intent = await classifyIntent(question);
 
-        // Handle quick responses (no streaming needed)
+        // Handle quick responses (standardize to SSE format for frontend consistency)
         if (intent.includes('GREETING')) {
             const answer = "Hello! I am your AI Course Assistant. I'm here to help you understand the course material. You can ask me to summarize lectures or explain specific concepts.";
             await saveMessages(courseId, question, answer);
-            return new Response(JSON.stringify({ answer, context: [] }), {
-                headers: { 'Content-Type': 'application/json' }
+
+            const encoder = new TextEncoder();
+            const stream = new ReadableStream({
+                start(controller) {
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ token: answer })}\n\n`));
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true, context: [] })}\n\n`));
+                    controller.close();
+                }
+            });
+
+            return new Response(stream, {
+                headers: {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive'
+                }
             });
         }
 

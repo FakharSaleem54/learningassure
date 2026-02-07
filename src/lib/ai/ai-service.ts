@@ -159,12 +159,15 @@ export async function generateStreamingAIResponse(options: AIRequestOptions): Pr
             const encoder = new TextEncoder();
             const decoder = new TextDecoder();
 
+            let buffer = '';
             const transformStream = new TransformStream({
                 async transform(chunk, controller) {
-                    const text = decoder.decode(chunk);
-                    const lines = text.split('\n').filter(line => line.trim());
+                    buffer += decoder.decode(chunk, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
 
                     for (const line of lines) {
+                        if (!line.trim()) continue;
                         try {
                             const parsed = JSON.parse(line);
                             if (parsed.response) {
@@ -176,6 +179,19 @@ export async function generateStreamingAIResponse(options: AIRequestOptions): Pr
                         } catch (e) {
                             // Skip malformed JSON
                         }
+                    }
+                },
+                flush(controller) {
+                    if (buffer.trim()) {
+                        try {
+                            const parsed = JSON.parse(buffer);
+                            if (parsed.response) {
+                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ token: parsed.response })}\n\n`));
+                            }
+                            if (parsed.done) {
+                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+                            }
+                        } catch (e) { /* skip */ }
                     }
                 }
             });
@@ -218,27 +234,48 @@ export async function generateStreamingAIResponse(options: AIRequestOptions): Pr
             const encoder = new TextEncoder();
             const decoder = new TextDecoder();
 
+            let buffer = '';
             const transformStream = new TransformStream({
                 async transform(chunk, controller) {
-                    const text = decoder.decode(chunk);
-                    const lines = text.split('\n').filter(line => line.trim());
+                    buffer += decoder.decode(chunk, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
 
                     for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            const data = line.slice(6);
-                            if (data === '[DONE]') {
-                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
-                                continue;
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+
+                        const data = trimmedLine.slice(6);
+                        if (data === '[DONE]') {
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+                            continue;
+                        }
+
+                        try {
+                            const parsed = JSON.parse(data);
+                            const token = parsed.choices?.[0]?.delta?.content;
+                            if (token) {
+                                controller.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
                             }
+                        } catch (e) {
+                            // Skip
+                        }
+                    }
+                },
+                flush(controller) {
+                    const trimmedLine = buffer.trim();
+                    if (trimmedLine.startsWith('data: ')) {
+                        const data = trimmedLine.slice(6);
+                        if (data === '[DONE]') {
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ done: true })}\n\n`));
+                        } else {
                             try {
                                 const parsed = JSON.parse(data);
                                 const token = parsed.choices?.[0]?.delta?.content;
                                 if (token) {
                                     controller.enqueue(encoder.encode(`data: ${JSON.stringify({ token })}\n\n`));
                                 }
-                            } catch (e) {
-                                // Skip
-                            }
+                            } catch (e) { /* skip */ }
                         }
                     }
                 }

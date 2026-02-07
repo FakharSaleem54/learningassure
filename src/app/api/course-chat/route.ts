@@ -152,22 +152,30 @@ Answer:`;
                 });
             }
 
-            // Wrap the stream to save the final message
+            // Wrap the stream to save the final message and add metadata
             const encoder = new TextEncoder();
+            const decoder = new TextDecoder();
             let fullAnswer = '';
+            let buffer = '';
 
             const wrappedStream = new TransformStream({
                 async transform(chunk, controller) {
-                    const text = new TextDecoder().decode(chunk);
+                    buffer += decoder.decode(chunk, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
 
-                    // Extract tokens from the stream
-                    const lines = text.split('\n').filter(line => line.startsWith('data: '));
                     for (const line of lines) {
+                        const trimmedLine = line.trim();
+                        if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+
                         try {
-                            const parsed = JSON.parse(line.slice(6));
+                            const data = trimmedLine.slice(6);
+                            const parsed = JSON.parse(data);
+
                             if (parsed.token) {
                                 fullAnswer += parsed.token;
                             }
+
                             if (parsed.done) {
                                 // Save AI response when streaming completes
                                 await prisma.chatMessage.create({
@@ -178,10 +186,15 @@ Answer:`;
                                 return;
                             }
                         } catch (e) {
-                            // Pass through the chunk
+                            // Pass through the line if it's not valid JSON but still starts with data:
                         }
+                        controller.enqueue(encoder.encode(line + '\n'));
                     }
-                    controller.enqueue(chunk);
+                },
+                async flush(controller) {
+                    if (buffer.trim()) {
+                        controller.enqueue(encoder.encode(buffer));
+                    }
                 }
             });
 

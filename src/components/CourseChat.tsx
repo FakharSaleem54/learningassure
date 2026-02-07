@@ -124,16 +124,21 @@ export default function CourseChat({ courseId, activeLessonTitle, activeLessonId
 
             const reader = res.body.getReader();
             const decoder = new TextDecoder();
+            let buffer = '';
 
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
 
-                const chunk = decoder.decode(value);
-                const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split('\n');
+                buffer = lines.pop() || '';
 
                 for (const line of lines) {
-                    const data = line.slice(6); // Remove 'data: ' prefix
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine || !trimmedLine.startsWith('data: ')) continue;
+
+                    const data = trimmedLine.slice(6); // Remove 'data: ' prefix
                     try {
                         const parsed = JSON.parse(data);
 
